@@ -1,15 +1,17 @@
 
 #include "per/per.h"
 
+#include <utility>
+
 void PriorityExperience::push(py::object value)
 {
-   m_sumtree.insert(value, std::numeric_limits< double >::infinity());
+   m_sumtree.insert(std::move(value), std::numeric_limits< double >::infinity());
 }
 
 void PriorityExperience::push(const std::vector< py::object > &values)
 {
-   for(size_t i = 0; i < values.size(); i++) {
-      push(values[i]);
+   for(const auto & value : values) {
+      push(value);
    }
 }
 
