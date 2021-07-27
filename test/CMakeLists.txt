@@ -7,16 +7,20 @@ set(TEST_SOURCES
 
 add_executable(tests ${TEST_SOURCES})
 
+set_target_properties(tests PROPERTIES
+        CXX_STANDARD 17
+        CXX_VISIBILITY_PRESET hidden
+        )
+
 target_include_directories(tests PRIVATE
         ${PER_INCLUDE_DIR}
         ${CONAN_INCLUDE_DIRS_GTEST}
         ${CONAN_INCLUDE_DIRS_PYBIND11}
-        ${PYTHON_INCLUDE_DIRS})
+        ${Python_INCLUDE_DIRS})
 
 target_link_libraries(tests PRIVATE
-        project_options
-        percpp
+        per_cpp_lib
         CONAN_PKG::gtest
         pybind11::embed
-        ${PYTHON_LIBRARIES})
+        ${Python_LIBRARIES})
 

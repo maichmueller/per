@@ -10,7 +10,7 @@
 
 namespace py = pybind11;
 
-class SumTree {
+class PYBIND11_EXPORT SumTree {
   public:
    SumTree(size_t capacity);
 

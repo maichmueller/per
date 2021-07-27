@@ -12,13 +12,13 @@
 
 #include "sum_tree.h"
 
-class PriorityExperience {
+class PYBIND11_EXPORT PrioritizedExperience {
   public:
    using ValueVec = std::vector< py::object >;
    using WeightVec = std::vector< double >;
    using IndexVec = std::vector< size_t >;
 
-   PriorityExperience(size_t capacity, std::mt19937_64::result_type seed = std::random_device{}());
+    PrioritizedExperience(size_t capacity, std::mt19937_64::result_type seed = std::random_device{}());
 
    void push(py::object value);
    void push(const std::vector<py::object>& values);

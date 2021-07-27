@@ -19,7 +19,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
     endif()
 endif()
 
-set(CMAKE_CONFIG_FOLDER "cmake")
+set(CMAKE_CONFIG_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Set this path if the conan install is not in the standard directory
 # This doesn't work due to a conan internal error when conan is not found in the standard directory (/usr/bin on linux)
@@ -72,27 +72,28 @@ endif()
 set(CONAN_EXTRA_REQUIRES "")
 set(CONAN_EXTRA_OPTIONS "")
 
-
-include(cmake/Conan.cmake)
+include(${CMAKE_CONFIG_FOLDER}/Conan.cmake)
 run_conan()
 include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
-set(PER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/per")
-set(PER_SRC_DIR "${PER_DIR}/src")
+set(PER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/pyper")
+set(PER_SRC_DIR "${PER_DIR}/impl")
 set(PER_INCLUDE_DIR ${PER_DIR}/include)
 
 message(STATUS "PER project directory: ${PER_DIR}")
 message(STATUS "PER include directory: ${PER_INCLUDE_DIR}")
 message(STATUS "PER src directory: ${PER_SRC_DIR}")
 
-add_library(percpp STATIC)
+add_library(per_cpp_lib STATIC)
 
+# this could be used:
+#find_package(Python COMPONENTS Interpreter Development)
+# but better to just let pybind11 do it:
+set(PYBIND11_FINDPYTHON TRUE)
 find_package(pybind11 REQUIRED)
-find_package(PythonLibs REQUIRED)
 
-add_subdirectory(per)
-
+add_subdirectory(src)
 
 if(ENABLE_TESTING)
     enable_testing()
@@ -102,3 +103,4 @@ if(ENABLE_TESTING)
     add_subdirectory(test)
 endif()
 
+install(TARGETS _pyper DESTINATION .)

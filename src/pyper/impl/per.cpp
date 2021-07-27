@@ -3,19 +3,19 @@
 
 #include <utility>
 
-void PriorityExperience::push(py::object value)
+void PrioritizedExperience::push(py::object value)
 {
    m_sumtree.insert(std::move(value), std::numeric_limits< double >::infinity());
 }
 
-void PriorityExperience::push(const std::vector< py::object > &values)
+void PrioritizedExperience::push(const std::vector< py::object > &values)
 {
-   for(const auto & value : values) {
+   for(const auto &value : values) {
       push(value);
    }
 }
 
-void PriorityExperience::update(
+void PrioritizedExperience::update(
    const std::vector< size_t > &indices,
    const std::vector< double > &priorities)
 {
@@ -25,10 +25,10 @@ void PriorityExperience::update(
 }
 
 std::tuple<
-   PriorityExperience::ValueVec,
-   PriorityExperience::WeightVec,
-   PriorityExperience::IndexVec >
-PriorityExperience::sample(size_t n, double beta)
+   PrioritizedExperience::ValueVec,
+   PrioritizedExperience::WeightVec,
+   PrioritizedExperience::IndexVec >
+PrioritizedExperience::sample(size_t n, double beta)
 {
    ValueVec values;
    WeightVec weights;
@@ -65,7 +65,7 @@ PriorityExperience::sample(size_t n, double beta)
    return {values, weights, indices};
 }
 
-void PriorityExperience::alpha(double alpha)
+void PrioritizedExperience::alpha(double alpha)
 {
    double old_alpha = m_alpha;
    m_alpha = alpha;
@@ -75,4 +75,9 @@ void PriorityExperience::alpha(double alpha)
       //    (p^(a_1))^(a_2 / a_1) = p^(a_2)
       m_sumtree.update(i, std::pow(m_sumtree.priority(i), alpha / old_alpha));
    }
+}
+
+PrioritizedExperience::PrioritizedExperience(size_t capacity, std::mt19937_64::result_type seed)
+    : m_capacity(capacity), m_alpha(1), m_rng(seed), m_sumtree(capacity)
+{
 }
