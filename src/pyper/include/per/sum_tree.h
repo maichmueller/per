@@ -10,7 +10,7 @@
 
 namespace py = pybind11;
 
-class PYBIND11_EXPORT SumTree {
+class SumTree {
   public:
    SumTree(size_t capacity);
 
@@ -18,13 +18,24 @@ class PYBIND11_EXPORT SumTree {
    [[nodiscard]] inline double total() const { return m_prioritree[0]; }
    [[nodiscard]] inline size_t size() const { return m_size; }
 
-   void insert(py::object value, double priority);
+   std::optional< std::tuple< py::object, double > > insert(py::object value, double priority);
    void update(size_t index, double priority);
    void update(const std::vector< size_t >& index, const std::vector< double >& priority);
 
    std::tuple< size_t, py::object, double > get(double priority, bool percentage = true);
    double priority(size_t index);
-   [[nodiscard]] std::vector< double > priorities_all() const;
+
+   [[nodiscard]] std::vector< double >::const_iterator priority_begin() const;
+   [[nodiscard]] std::vector< double >::const_iterator priority_end() const;
+   [[nodiscard]] std::vector< py::object >::const_iterator value_begin() const
+   {
+      return m_values.begin();
+   }
+   [[nodiscard]] std::vector< py::object >::const_iterator value_end() const
+   {
+      return m_values.end();
+   }
+
    std::string as_str();
 
   private:
@@ -36,6 +47,8 @@ class PYBIND11_EXPORT SumTree {
 
    std::vector< double > m_prioritree;
    std::vector< py::object > m_values;
+
+   size_t _first_index_at_level(size_t level) const { return std::exp2(level - 1) - 1;}
 
    template < typename T1, typename T2, typename Allocator1, typename Allocator2 >
    void _assert_length_eq(

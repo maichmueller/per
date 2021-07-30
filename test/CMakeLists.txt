@@ -3,6 +3,7 @@ find_package("GTest")
 
 set(TEST_SOURCES
         test_sumtree.cpp
+        test_per.cpp
         tests.cpp)
 
 add_executable(tests ${TEST_SOURCES})

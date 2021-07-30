@@ -5,19 +5,19 @@ include(cmake/StandardProjectSettings.cmake)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-if(APPLE)
+if (APPLE)
     set(CMAKE_CXX_COMPILER /usr/bin/g++)
-endif()
+endif ()
 
 message("C++ Compiler: ${CMAKE_CXX_COMPILER}")
 message("C++ Compiler Info: ${CMAKE_CXX_COMPILER_ID}, version ${CMAKE_CXX_COMPILER_VERSION}")
 message("CURRENT CMAKE BINARY DIR: ${CMAKE_CURRENT_BINARY_DIR}")
-if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
     option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
     if (ENABLE_BUILD_WITH_TIME_TRACE)
         add_compile_definitions(project_options INTERFACE -ftime-trace)
-    endif()
-endif()
+    endif ()
+endif ()
 
 set(CMAKE_CONFIG_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -65,7 +65,7 @@ if (ENABLE_PCH)
     # consider breaking this out per project as necessary
     target_precompile_headers(project_options
             INTERFACE <vector> <string> <map> <utility> <memory> <array> <list> <stack>)
-endif()
+endif ()
 
 # Set up some extra Conan dependencies based on our needs
 # before loading Conan
@@ -95,12 +95,16 @@ find_package(pybind11 REQUIRED)
 
 add_subdirectory(src)
 
-if(ENABLE_TESTING)
-    enable_testing()
-    message(
-            "Building Tests."
-    )
-    add_subdirectory(test)
-endif()
+if (SKBUILD)
+    message("Building with scikit-build. Disabling Test target.")
+else ()
+    if (ENABLE_TESTING)
+        enable_testing()
+        message(
+                "Building Tests."
+        )
+        add_subdirectory(test)
+    endif ()
+endif ()
 
 install(TARGETS _pyper DESTINATION .)

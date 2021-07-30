@@ -12,17 +12,23 @@ SumTree::SumTree(size_t capacity)
 {
 }
 
-void SumTree::insert(py::object value, double priority)
+std::optional< std::tuple< py::object, double > > SumTree::insert(py::object value, double priority)
 {
+   std::optional< std::tuple< py::object, double > > old_pair = std::nullopt;
+   if(m_size == m_capacity) {
+      old_pair = {m_values[m_leaf_pos], *(priority_begin() + m_leaf_pos)};
+   }
    m_values[m_leaf_pos] = std::move(value);
-   update(std::exp2(m_leaf_level - 1) - 1 + m_leaf_pos, priority);
+   update(m_leaf_pos, priority);
 
    m_leaf_pos = (m_leaf_pos + 1) % m_capacity;
    m_size = std::min(m_size + 1, m_capacity);
+   return old_pair;
 }
 
 void SumTree::update(size_t index, double priority)
 {
+   index += _first_index_at_level(m_leaf_level);
    double delta = priority - m_prioritree[index];
    m_prioritree[index] = priority;
    while(index > 0) {
@@ -35,6 +41,9 @@ void SumTree::update(const std::vector< size_t >& index, const std::vector< doub
 {
    _assert_length_eq(index, priority);
    for(size_t i = 0; i < index.size(); i++) {
+      if(i < 0 || i >= m_size) {
+         throw std::out_of_range("Index '" + std::to_string(i) + "' out of bounds.");
+      }
       update(index[i], priority[i]);
    }
 };
@@ -103,13 +112,12 @@ std::string SumTree::as_str()
    return ss.str();
 }
 
-std::vector< double > SumTree::priorities_all() const
+std::vector< double >::const_iterator SumTree::priority_begin() const
 {
-   std::vector< double > prios;
-   prios.reserve(m_size);
-   size_t first_leaf_idx = std::exp2(m_leaf_level - 1) - 1;
-   for(size_t i = 0; i < m_size; i++) {
-      prios.emplace_back(m_prioritree[first_leaf_idx + 1]);
-   }
-   return prios;
+   return m_prioritree.begin() + _first_index_at_level(m_leaf_level);
+}
+
+std::vector< double >::const_iterator SumTree::priority_end() const
+{
+   return m_prioritree.begin() + _first_index_at_level(m_leaf_level) + m_size;
 }

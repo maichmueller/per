@@ -20,3 +20,13 @@ def test_sumtree():
         return_value = tree.get(0.5)
         for k in range(len(results)):
             assert return_value[k] == results[k]
+
+
+def test_sumtree_priority_iter():
+    n = 10
+    tree = pyper.SumTree(n)
+    for i in range(2 * n):
+        tree.insert(i, 2 * i)
+
+    for k, i in zip(tree.priority_iter(), range(10, 2 * n)):
+        assert k == 2 * i

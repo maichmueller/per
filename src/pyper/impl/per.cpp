@@ -3,9 +3,29 @@
 
 #include <utility>
 
+void PrioritizedExperience::_recompute_max_priority(double triggering_prio)
+{
+   if(std::abs(triggering_prio - m_max_priority) < 1e-16) {
+      _recompute_max_priority();
+   }
+}
+void PrioritizedExperience::_recompute_max_priority()
+{
+   double max_val = 0;
+   for(auto prio_iter = m_sumtree.priority_begin(); prio_iter != m_sumtree.priority_end();
+       ++prio_iter) {
+      if(*prio_iter > max_val)
+         max_val = *prio_iter;
+   }
+   m_max_priority = max_val;
+}
+
 void PrioritizedExperience::push(py::object value)
 {
-   m_sumtree.insert(std::move(value), std::numeric_limits< double >::infinity());
+   auto deleted_entry = m_sumtree.insert(std::move(value), m_max_priority);
+   if(deleted_entry.has_value()) {
+      _recompute_max_priority(std::get< 1 >(deleted_entry.value()));
+   }
 }
 
 void PrioritizedExperience::push(const std::vector< py::object > &values)
@@ -20,7 +40,7 @@ void PrioritizedExperience::update(
    const std::vector< double > &priorities)
 {
    for(size_t i = 0; i < indices.size(); i++) {
-      m_sumtree.update(indices[i], std::pow(priorities[i], m_alpha));
+      m_sumtree.update(indices[i], std::pow(std::abs(priorities[i]), m_alpha));
    }
 }
 
