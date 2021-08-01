@@ -97,6 +97,9 @@ add_subdirectory(src)
 
 if (SKBUILD)
     message("Building with scikit-build. Disabling Test target.")
+    # install locally so that sciki-build can correctly install it
+    install(TARGETS _pyper DESTINATION .)
+
 else ()
     if (ENABLE_TESTING)
         enable_testing()
@@ -105,6 +108,9 @@ else ()
         )
         add_subdirectory(test)
     endif ()
+
+    # in order to use the latest build of the library for a development package install (pip install . -e),
+    # we have to install it in the package folder, where it is used
+    install(TARGETS _pyper LIBRARY DESTINATION ${PER_DIR})
 endif ()
 
-install(TARGETS _pyper DESTINATION .)

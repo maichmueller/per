@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
 set(LIBRARY_SOURCES
-        ${PER_SRC_DIR}/sum_tree.cpp
         ${PER_SRC_DIR}/per.cpp
         )
 

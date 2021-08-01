@@ -25,6 +25,6 @@ def test_per():
         per2.push(v)
         per3.push(v)
 
-    assert per1.sample(5, 1) == per2.sample(5, 1)
-    assert per1.sample(5, 1) != per3.sample(5, 1)
+    assert per1.sample(5) == per2.sample(5)
+    assert per1.sample(5) != per3.sample(5)
 

@@ -25,16 +25,16 @@ TEST(PrioritizedExperience, reproduciblity)
    };
 
    auto [per1, per2, per3] = std::tuple{
-      PrioritizedExperience(10, 0), PrioritizedExperience(10, 0), PrioritizedExperience(10, 1)};
+      PrioritizedExperience(10, 1., 1., 0), PrioritizedExperience(10, 1., 1., 0), PrioritizedExperience(10, 1., 1., 1)};
 
    for(auto& v : values) {
       per1.push(v);
       per2.push(v);
       per3.push(v);
    }
-   auto sample1 = per1.sample(5, 1);
-   auto sample2 = per2.sample(5, 1);
-   auto sample3 = per3.sample(5, 1);
+   auto sample1 = per1.sample(5);
+   auto sample2 = per2.sample(5);
+   auto sample3 = per3.sample(5);
 
    ASSERT_EQ(sample1, sample2);
    ASSERT_NE(sample1, sample3);
@@ -45,7 +45,7 @@ TEST(PrioritizedExperience, sample)
    // enable usage of py::object subtypes
    py::scoped_interpreter guard{};
 
-   auto per = PrioritizedExperience(10, 0);
+   auto per = PrioritizedExperience(10, 1., 1., 0);
    size_t n = 10;
    std::vector< size_t > values;
    std::vector< double > prios(n, 0.);
@@ -56,7 +56,7 @@ TEST(PrioritizedExperience, sample)
    per.update(values, prios);  // set all priorities to 0 so they are ignored for sampling;
    per.update({5}, {1.});  // set 5th entry to 1 to enable only its sampling
 
-   auto [sample_vs, sample_ps, sample_is] = per.sample(5, 1);
+   auto [sample_vs, sample_ps, sample_is] = per.sample(5);
 
    // the sampling logic sets an already sampled entry's priority to 0 after its draw, so only the
    // first sample should be the prioritized index.
