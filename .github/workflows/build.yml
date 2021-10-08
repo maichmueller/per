@@ -42,11 +42,11 @@ jobs:
         shell: bash
         run: |
           if [[ ${{ runner.os }} == 'Linux' ]]; then
-            sudo apt-get install -y doxygen dot
+            sudo apt-get clean && sudo apt-get update && sudo apt-get install -y doxygen dot
           elif [[ ${{ runner.os }} == 'macos' ]]; then
             brew install doxygen dot
           else
-            apt-get install -y doxygen dot
+            apt-get clean && apt-get update && apt-get install -y doxygen dot
           fi
 
       - name: Install Doxygen
