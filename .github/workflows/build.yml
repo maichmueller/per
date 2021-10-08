@@ -3,78 +3,24 @@ name: CI
 on: [ push, pull_request ]
 
 jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: |
+          TASKS=$(echo $(cat .github/workflows/build-matrix.json) | sed 's/ //g' )
+          echo "::set-output name=matrix::$TASKS"
   build-and-test:
+    needs: matrix
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - {
-            name: "Windows Latest MSVC",
-            os: windows-latest,
-            build_type: "Release",
-            cc: cl,
-            cxx: cl
-          }
-          - {
-            name: "Windows Latest MinGW",
-            os: windows-latest,
-            build_type: "Release",
-            cc: gcc,
-            cxx: g++
-          }
-          - {
-            name: "Ubuntu 20.04 GCC-10",
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: gcc-10,
-            cxx: g++-10
-          }
-          - {
-            name: "Ubuntu 20.04 GCC-9",
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: gcc-9,
-            cxx: g++-9
-          }
-          # GCC-11 not yet (easily) available on GitHub Action, uncomment once this has changed.
-          #          - {
-          #            name: "Ubuntu 20.04 GCC-11",
-          #            os: ubuntu-20.04,
-          #            build_type: "Release",
-          #            cc: gcc-11,
-          #            cxx: g++-11
-          #          }
-          - {
-            name: "Ubuntu 18.04 GCC-9",
-            os: ubuntu-18.04,
-            build_type: "Release",
-            cc: gcc-9,
-            cxx: g++-9
-          }
-          - {
-            name: "Ubuntu 18.04 GCC-10",
-            os: ubuntu-18.04,
-            build_type: "Release",
-            cc: gcc-10,
-            cxx: g++-10
-          }
-          # GCC-11 not yet (easily) available on GitHub Action, uncomment once this has changed.
-          #          - {
-          #            name: "Ubuntu 18.04 GCC-11",
-          #            os: ubuntu-18.04,
-          #            build_type: "Release",
-          #            cc: gcc-11,
-          #            cxx: g++-11
-          #          }
-          - {
-            name: "macOS Latest Clang",
-            os: macos-latest,
-            build_type: "Release",
-            cc: clang,
-            cxx: clang++
-          }
+        config: ${{ fromJson(needs.matrix.outputs.matrix) }}
 
     steps:
       - uses: actions/checkout@v2
@@ -152,7 +98,8 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     needs: build-and-test
     strategy:
-      matrix: build-and-test.strategy.matrix
+      matrix:
+        config: ${{ fromJson(needs.matrix.outputs.matrix) }}
     steps:
       - name: Install
         working-directory: ${{runner.workspace}}/build
