@@ -77,7 +77,7 @@ jobs:
           GTEST_OUTPUT=xml:gtest-report-${{ runner.os }}.xml ctest . --verbose
 
   publish-gtest-results:
-    name: "Publish GTest Unit Tests Results"
+    name: "Publish GTest Results"
     needs: build-and-test
     runs-on: ubuntu-latest
     if: always()
@@ -94,7 +94,7 @@ jobs:
           files: artifacts/**/*.xml
 
   installation-test:
-    name: CMake ${{ matrix.config.name }}-Install Test
+    name: CMake ${{ matrix.config.name }} Install
     runs-on: ${{ matrix.config.os }}
     needs: build-and-test
     strategy:
