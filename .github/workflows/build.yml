@@ -13,6 +13,7 @@ jobs:
         run: |
           TASKS=$(echo $(cat .github/workflows/build-matrix.json) | sed 's/ //g' )
           echo "::set-output name=matrix::$TASKS"
+
   build-and-test:
     needs: matrix
     name: ${{ matrix.config.name }}
@@ -30,6 +31,12 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: '3.9'
+
+      - uses: mattnotmitt/doxygen-action@v1
+        with:
+          additional-packages: font-fira-code
+          doxyfile-path: 'docs/Doxygen'
+          enable-latex: true
 
       - name: Install conan
         shell: bash
