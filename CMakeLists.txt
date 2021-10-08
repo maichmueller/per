@@ -53,6 +53,16 @@ target_compile_features(project_options
 add_library(project_warnings INTERFACE)
 
 
+# Set up some extra Conan dependencies based on our needs
+# before loading Conan
+set(CONAN_EXTRA_REQUIRES "")
+set(CONAN_EXTRA_OPTIONS "")
+
+include(${CMAKE_CONFIG_FOLDER}/settings/Conan.cmake)
+run_conan()
+include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
 #include(cmake/settings/StandardProjectSettings.cmake)
 
 # enable cache system
@@ -88,17 +98,6 @@ if (ENABLE_PCH)
     target_precompile_headers(project_options
             INTERFACE <vector> <string> <map> <utility> <memory> <array> <list> <stack>)
 endif ()
-
-# Set up some extra Conan dependencies based on our needs
-# before loading Conan
-set(CONAN_EXTRA_REQUIRES "")
-set(CONAN_EXTRA_OPTIONS "")
-
-include(${CMAKE_CONFIG_FOLDER}/settings/Conan.cmake)
-run_conan()
-include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-
 
 # this could be used:
 #find_package(Python3 COMPONENTS Interpreter Development)
