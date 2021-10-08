@@ -36,7 +36,7 @@ jobs:
         with:
           working-directory: $GITHUB_WORKSPACE
           additional-packages: font-fira-code
-          doxyfile-path: 'docs/Doxygen'
+          doxyfile-path: 'docs/Doxyfile'
           enable-latex: true
 
       - name: Install conan
