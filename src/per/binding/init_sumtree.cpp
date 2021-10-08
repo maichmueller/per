@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 
-#include "per/sum_tree.h"
+#include "per/sum_tree.hpp"
 
 namespace py = pybind11;
 

@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
-#include "per/per.h"
+
+#include "per/per.hpp"
 
 namespace py = pybind11;
 

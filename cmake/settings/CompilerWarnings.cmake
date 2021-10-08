@@ -4,7 +4,6 @@
 # lable.md
 
 function(set_project_warnings project_name)
-  option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
 
   set(MSVC_WARNINGS
       /W4 # Baseline reasonable warnings

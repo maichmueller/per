@@ -1,0 +1,168 @@
+name: CI
+
+on: [ push, pull_request ]
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            name: "Windows Latest MSVC",
+            os: windows-latest,
+            build_type: "Release",
+            cc: cl,
+            cxx: cl
+          }
+          - {
+            name: "Windows Latest MinGW",
+            os: windows-latest,
+            build_type: "Release",
+            cc: gcc,
+            cxx: g++
+          }
+          - {
+            name: "Ubuntu 20.04 GCC-10",
+            os: ubuntu-20.04,
+            build_type: "Release",
+            cc: gcc-10,
+            cxx: g++-10
+          }
+          - {
+            name: "Ubuntu 20.04 GCC-9",
+            os: ubuntu-20.04,
+            build_type: "Release",
+            cc: gcc-9,
+            cxx: g++-9
+          }
+          # GCC-11 not yet (easily) available on GitHub Action, uncomment once this has changed.
+          #          - {
+          #            name: "Ubuntu 20.04 GCC-11",
+          #            os: ubuntu-20.04,
+          #            build_type: "Release",
+          #            cc: gcc-11,
+          #            cxx: g++-11
+          #          }
+          - {
+            name: "Ubuntu 18.04 GCC-9",
+            os: ubuntu-18.04,
+            build_type: "Release",
+            cc: gcc-9,
+            cxx: g++-9
+          }
+          - {
+            name: "Ubuntu 18.04 GCC-10",
+            os: ubuntu-18.04,
+            build_type: "Release",
+            cc: gcc-10,
+            cxx: g++-10
+          }
+          # GCC-11 not yet (easily) available on GitHub Action, uncomment once this has changed.
+          #          - {
+          #            name: "Ubuntu 18.04 GCC-11",
+          #            os: ubuntu-18.04,
+          #            build_type: "Release",
+          #            cc: gcc-11,
+          #            cxx: g++-11
+          #          }
+          - {
+            name: "macOS Latest Clang",
+            os: macos-latest,
+            build_type: "Release",
+            cc: clang,
+            cxx: clang++
+          }
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install conan
+        shell: bash
+        run: |
+          python3 -m pip install --upgrade pip setuptools
+          python3 -m pip install conan
+
+      - name: Source profile
+        if: runner.os == 'Linux'
+        shell: bash
+        run: source ~/.profile
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.9
+        with:
+          cmake-version: '3.21'
+
+      - name: Use cmake
+        run: cmake --version
+
+      - name: Create Build Environment
+        # Some projects don't allow in-source building, so create a separate build directory
+        # We'll use this as our working directory for all subsequent commands
+        run: cmake -E make_directory ${{runner.workspace}}/build
+
+      - name: Configure CMake
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: bash
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+        working-directory: ${{runner.workspace}}/build
+        run: |
+          cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DWARNINGS_AS_ERRORS=TRUE
+
+      - name: Build
+        working-directory: ${{runner.workspace}}/build
+        run: |
+          cmake --build .
+
+      - name: run tests
+        working-directory: ${{runner.workspace}}/build
+        run: |
+          GTEST_OUTPUT=xml:gtest-report-${{ runner.os }}.xml ctest . --verbose
+
+  publish-gtest-results:
+    name: "Publish GTest Unit Tests Results"
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          files: artifacts/**/*.xml
+
+  installation-test:
+    name: CMake ${{ matrix.config.name }}-Install Test
+    runs-on: ${{ matrix.config.os }}
+    needs: build-and-test
+    strategy:
+      matrix: build-and-test.strategy.matrix
+    steps:
+      - name: Install
+        working-directory: ${{runner.workspace}}/build
+        run: |
+          cmake --install . --prefix=$GITHUB_WORKSPACE/installation
+
+      - name: List Install Directory
+        working-directory: ${{runner.workspace}}/installation
+        run: |
+          ls
+
+
+

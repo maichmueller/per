@@ -1,13 +1,28 @@
 cmake_minimum_required(VERSION 3.15)
 
 project(PER VERSION 0.1 LANGUAGES CXX)
-include(cmake/StandardProjectSettings.cmake)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-if (APPLE)
-    set(CMAKE_CXX_COMPILER /usr/bin/g++)
-endif ()
+
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE )
+set(per_lib_name per++)
+set(per_python_module_name pyper)
+set(per_test_bin_name tests)
+set(PROJECT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(PROJECT_TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test")
+set(PROJECT_PER_DIR "${PROJECT_SRC_DIR}/per")
+set(PROJECT_PYPER_DIR "${PROJECT_SRC_DIR}/pyper")
+set(PROJECT_PER_SRC_DIR "${PROJECT_PER_DIR}/impl")
+set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
+set(PROJECT_PER_BINDING_DIR "${PROJECT_PER_DIR}/binding")
+
+option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
+
+message(STATUS "PER project files directory: ${PROJECT_SRC_DIR}")
+message(STATUS "PER include directory: ${PROJECT_PER_SRC_DIR}")
+message(STATUS "PER src directory: ${PROJECT_PER_INCLUDE_DIR}")
+message(STATUS "PER bindings directory: ${PROJECT_PER_BINDING_DIR}")
+
 
 message("C++ Compiler: ${CMAKE_CXX_COMPILER}")
 message("C++ Compiler Info: ${CMAKE_CXX_COMPILER_ID}, version ${CMAKE_CXX_COMPILER_VERSION}")
@@ -29,28 +44,35 @@ set(CMAKE_CONFIG_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Link this 'library' to set the c++ standard / compile-time options requested
 add_library(project_options INTERFACE)
-target_compile_features(project_options INTERFACE cxx_std_17)
+target_compile_features(project_options
+        INTERFACE
+        cxx_std_17
+        )
+
 # Link this 'library' to use the warnings specified in CompilerWarnings.cmake
 add_library(project_warnings INTERFACE)
 
+
+#include(cmake/settings/StandardProjectSettings.cmake)
+
 # enable cache system
-include(${CMAKE_CONFIG_FOLDER}/Cache.cmake)
+include(${CMAKE_CONFIG_FOLDER}/settings/Cache.cmake)
 
 # standard compiler warnings
-include(${CMAKE_CONFIG_FOLDER}/CompilerWarnings.cmake)
+include(${CMAKE_CONFIG_FOLDER}/settings/CompilerWarnings.cmake)
 set_project_warnings(project_warnings)
 
 # sanitizer options if supported by compiler
-include(${CMAKE_CONFIG_FOLDER}/Sanitizers.cmake)
+include(${CMAKE_CONFIG_FOLDER}/settings/Sanitizers.cmake)
 enable_sanitizers(project_options)
 
 # enable doxygen
-include(${CMAKE_CONFIG_FOLDER}/Doxygen.cmake)
+include(${CMAKE_CONFIG_FOLDER}/settings/Doxygen.cmake)
 option(ENABLE_DOXYGEN "Enable doxygen doc builds of source")
 enable_doxygen(ENABLE_DOXYGEN)
 
 # allow for static analysis options
-include(${CMAKE_CONFIG_FOLDER}/StaticAnalyzers.cmake)
+include(${CMAKE_CONFIG_FOLDER}/settings/StaticAnalyzers.cmake)
 
 option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 option(ENABLE_TESTING "Enable Test Builds" ON)
@@ -72,45 +94,73 @@ endif ()
 set(CONAN_EXTRA_REQUIRES "")
 set(CONAN_EXTRA_OPTIONS "")
 
-include(${CMAKE_CONFIG_FOLDER}/Conan.cmake)
+include(${CMAKE_CONFIG_FOLDER}/settings/Conan.cmake)
 run_conan()
 include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
-set(PER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/pyper")
-set(PER_SRC_DIR "${PER_DIR}/impl")
-set(PER_INCLUDE_DIR ${PER_DIR}/include)
-
-message(STATUS "PER project directory: ${PER_DIR}")
-message(STATUS "PER include directory: ${PER_INCLUDE_DIR}")
-message(STATUS "PER src directory: ${PER_SRC_DIR}")
-
-add_library(per_cpp_lib STATIC)
 
 # this could be used:
-#find_package(Python COMPONENTS Interpreter Development)
+#find_package(Python3 COMPONENTS Interpreter Development)
 # but better to just let pybind11 do it:
 set(PYBIND11_FINDPYTHON TRUE)
 find_package(pybind11 REQUIRED)
 
-add_subdirectory(src)
+include(${CMAKE_CONFIG_FOLDER}/targets/per.cmake)
+include(${CMAKE_CONFIG_FOLDER}/targets/pyper.cmake)
 
 if (SKBUILD)
     message("Building with scikit-build. Disabling Test target.")
     # install locally so that sciki-build can correctly install it
-    install(TARGETS _pyper DESTINATION .)
+    install(TARGETS ${per_python_module_name} LIBRARY DESTINATION .)
 
 else ()
     if (ENABLE_TESTING)
+        find_package("GTest")
         enable_testing()
         message(
-                "Building Tests."
+                "Configuring Tests."
         )
-        add_subdirectory(test)
+        include(${CMAKE_CONFIG_FOLDER}/targets/tests.cmake)
     endif ()
 
     # in order to use the latest build of the library for a development package install (pip install . -e),
     # we have to install it in the package folder, where it is used
-    install(TARGETS _pyper LIBRARY DESTINATION ${PER_DIR})
+    install(TARGETS ${per_python_module_name} LIBRARY DESTINATION ${PROJECT_PYPER_DIR})
+    add_custom_target(Copy_${per_python_module_name}_to_destination
+            COMMAND ${CMAKE_COMMAND} --install)
+
+    include(CMakePackageConfigHelpers)
+    write_basic_package_version_file(
+            "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}ConfigVersion.cmake"
+            VERSION ${PROJECT_VERSION}
+            COMPATIBILITY AnyNewerVersion
+    )
+    install(TARGETS project_options EXPORT ${PROJECT_NAME_LOWERCASE}Options)
+    install(TARGETS project_warnings EXPORT ${PROJECT_NAME_LOWERCASE}Warnings)
+    install(TARGETS ${per_lib_name}_interface ${per_lib_name}_shared ${per_lib_name}_static
+            EXPORT ${PROJECT_NAME_LOWERCASE}Targets
+            LIBRARY DESTINATION lib COMPONENT Runtime
+            ARCHIVE DESTINATION lib COMPONENT Development
+            RUNTIME DESTINATION bin COMPONENT Runtime
+            PUBLIC_HEADER DESTINATION include COMPONENT Development
+            BUNDLE DESTINATION bin COMPONENT Runtime
+            )
+
+    include(CMakePackageConfigHelpers)
+    configure_package_config_file(
+            "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME_LOWERCASE}Config.cmake.in"
+            "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}Config.cmake"
+            INSTALL_DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE}
+    )
+    install(EXPORT ${PROJECT_NAME_LOWERCASE}Options DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE})
+    install(EXPORT ${PROJECT_NAME_LOWERCASE}Warnings DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE})
+    install(EXPORT ${PROJECT_NAME_LOWERCASE}Targets DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE})
+    install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}ConfigVersion.cmake"
+            "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}Config.cmake"
+            DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE})
+    install(DIRECTORY ${PROJECT_PER_INCLUDE_DIR} DESTINATION include)
+
 endif ()
+
 

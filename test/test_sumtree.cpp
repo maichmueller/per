@@ -3,7 +3,7 @@
 #include <pybind11/pybind11.h>
 
 #include "gtest/gtest.h"
-#include "per/per.h"
+#include "per/per.hpp"
 
 TEST(SumTree, All)
 {

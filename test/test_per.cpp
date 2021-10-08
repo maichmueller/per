@@ -1,10 +1,9 @@
 
-
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 
 #include "gtest/gtest.h"
-#include "per/per.h"
+#include "per/per.hpp"
 
 TEST(PrioritizedExperience, reproduciblity)
 {
@@ -49,7 +48,7 @@ TEST(PrioritizedExperience, sample)
    size_t n = 10;
    std::vector< size_t > values;
    std::vector< double > prios(n, 0.);
-   for(auto v = 0; v < n; v++) {
+   for(size_t v = 0; v < n; v++) {
       values.emplace_back(v);
       per.push(py::int_(v));
    }
