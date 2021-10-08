@@ -34,6 +34,7 @@ jobs:
 
       - uses: mattnotmitt/doxygen-action@v1
         with:
+          working-directory: $GITHUB_WORKSPACE
           additional-packages: font-fira-code
           doxyfile-path: 'docs/Doxygen'
           enable-latex: true
