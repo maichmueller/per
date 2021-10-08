@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 3.15)
 
 project(PER VERSION 0.1 LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE )
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
+
+
+# Use C++17
+set(PROJ_CXX_STD_FEATURE cxx_std_17)
+set(PROJ_CXX_STANDARD C++17)
+
 set(per_lib_name per++)
 set(per_python_module_name pyper)
 set(per_test_bin_name tests)
@@ -15,7 +19,24 @@ set(PROJECT_PYPER_DIR "${PROJECT_SRC_DIR}/pyper")
 set(PROJECT_PER_SRC_DIR "${PROJECT_PER_DIR}/impl")
 set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
 set(PROJECT_PER_BINDING_DIR "${PROJECT_PER_DIR}/binding")
+set(CMAKE_CONFIG_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
+option(ENABLE_BUILD_DOCS "Enable building the docs. Requires doxygen to be installed on the system" OFF)
+option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
+option(ENABLE_CACHE "Enable cache if available" ON)
+option(ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
+option(ENABLE_COVERAGE "Enable coverage reporting for gcc/clang" OFF)
+option(ENABLE_CPPCHECK "Enable static analysis with cppcheck" OFF)
+option(ENABLE_INCLUDE_WHAT_YOU_USE "Enable static analysis with include-what-you-use" OFF)
+option(ENABLE_IPO "Enable Interprocedural Optimization, aka Link Time Optimization (LTO)" OFF)
+option(ENABLE_PCH "Enable Precompiled Headers" ON)
+option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
+option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
+option(ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
+option(ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
+option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" OFF)
+option(ENABLE_TESTING "Enable Test Builds" ON)
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 
 message(STATUS "PER project files directory: ${PROJECT_SRC_DIR}")
@@ -23,35 +44,27 @@ message(STATUS "PER include directory: ${PROJECT_PER_SRC_DIR}")
 message(STATUS "PER src directory: ${PROJECT_PER_INCLUDE_DIR}")
 message(STATUS "PER bindings directory: ${PROJECT_PER_BINDING_DIR}")
 
-
 message("C++ Compiler: ${CMAKE_CXX_COMPILER}")
 message("C++ Compiler Info: ${CMAKE_CXX_COMPILER_ID}, version ${CMAKE_CXX_COMPILER_VERSION}")
 message("CURRENT CMAKE BINARY DIR: ${CMAKE_CURRENT_BINARY_DIR}")
-if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
-    option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
-    if (ENABLE_BUILD_WITH_TIME_TRACE)
-        add_compile_definitions(project_options INTERFACE -ftime-trace)
-    endif ()
-endif ()
-
-set(CMAKE_CONFIG_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Set this path if the conan install is not in the standard directory
 # This doesn't work due to a conan internal error when conan is not found in the standard directory (/usr/bin on linux)
 # It doesn't work in general when CONAN_COMMAND is set it seems.
 #execute_process(COMMAND which conan OUTPUT_VARIABLE CONAN_PATH)
 
-
 # Link this 'library' to set the c++ standard / compile-time options requested
 add_library(project_options INTERFACE)
-target_compile_features(project_options
-        INTERFACE
-        cxx_std_17
-        )
-
 # Link this 'library' to use the warnings specified in CompilerWarnings.cmake
 add_library(project_warnings INTERFACE)
 
+target_compile_features(project_options
+        INTERFACE
+        ${PROJ_CXX_STD_FEATURE}
+        )
+if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" AND ENABLE_BUILD_WITH_TIME_TRACE)
+    add_compile_definitions(project_options INTERFACE -ftime-trace)
+endif ()
 
 # Set up some extra Conan dependencies based on our needs
 # before loading Conan
@@ -63,7 +76,7 @@ run_conan()
 include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
-#include(cmake/settings/StandardProjectSettings.cmake)
+include(cmake/settings/StandardProjectSettings.cmake)
 
 # enable cache system
 include(${CMAKE_CONFIG_FOLDER}/settings/Cache.cmake)
@@ -78,18 +91,12 @@ enable_sanitizers(project_options)
 
 # enable doxygen
 include(${CMAKE_CONFIG_FOLDER}/settings/Doxygen.cmake)
-option(ENABLE_DOXYGEN "Enable doxygen doc builds of source")
-enable_doxygen(ENABLE_DOXYGEN)
+enable_doxygen(ENABLE_BUILD_DOCS)
 
 # allow for static analysis options
 include(${CMAKE_CONFIG_FOLDER}/settings/StaticAnalyzers.cmake)
 
-option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
-option(ENABLE_TESTING "Enable Test Builds" ON)
-option(ENABLE_FUZZING "Enable Fuzzing Builds" OFF)
-
 # Very basic PCH example
-option(ENABLE_PCH "Enable Precompiled Headers" ON)
 if (ENABLE_PCH)
     # This sets a global PCH parameter, each project will build its own PCH, which
     # is a good idea if any #define's change

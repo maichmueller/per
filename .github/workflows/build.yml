@@ -32,17 +32,16 @@ jobs:
         with:
           python-version: '3.9'
 
-      - uses: mattnotmitt/doxygen-action@v1
-        with:
-          additional-packages: font-fira-code
-          doxyfile-path: 'docs/Doxyfile'
-          enable-latex: true
-
       - name: Install conan
         shell: bash
         run: |
           python3 -m pip install --upgrade pip setuptools
           python3 -m pip install conan
+
+      - name: Install Doxygen
+        shell: bash
+        run: |
+          apt-get install -y doxygen
 
       - name: Source profile
         if: runner.os == 'Linux'
