@@ -101,7 +101,7 @@ jobs:
         if: success()
         with:
           name: gtest-results
-          path: ${{ runner.workspace }}/artifacts/gtest-report-${{ runner.os }}.xml
+          path: ${{ runner.workspace }}/build/**/gtest-report-${{ runner.os }}.xml
 
   publish-gtest-results:
     name: "Publish GTest Results"
