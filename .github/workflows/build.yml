@@ -35,6 +35,8 @@ jobs:
       - name: Setup Chocolatey
         if: ${{ runner.os }} == "Windows"
         uses: crazy-max/ghaction-chocolatey@v1
+        with:
+          args: h
 
       - name: Install conan
         shell: bash
