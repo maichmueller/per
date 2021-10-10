@@ -90,7 +90,7 @@ jobs:
       - name: Build
         working-directory: ${{runner.workspace}}/build
         run: |
-          cmake --build . --target ALL tests
+          cmake --build . --target all tests
 
       - name: Run Tests
         working-directory: ${{runner.workspace}}/build
