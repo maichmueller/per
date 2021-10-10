@@ -90,9 +90,9 @@ jobs:
       - name: Build
         working-directory: ${{runner.workspace}}/build
         run: |
-          cmake --build .
+          cmake --build . --target ALL tests
 
-      - name: run tests
+      - name: Run Tests
         working-directory: ${{runner.workspace}}/build
         run: |
           GTEST_OUTPUT=xml:gtest-report-${{ runner.os }}.xml ctest . --verbose
