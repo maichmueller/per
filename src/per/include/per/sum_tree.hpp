@@ -32,7 +32,7 @@ class SumTree {
    std::tuple< size_t, value_type, double > get(double priority, bool percentage = true);
    double priority(size_t index);
    value_type& operator[](size_t index) { return m_values[index]; }
-   const std::vector< value_type >& values(size_t index) const { return &m_values; }
+   const std::vector< value_type >& values() const { return &m_values; }
 
    [[nodiscard]] std::vector< double >::const_iterator priority_begin() const;
    [[nodiscard]] std::vector< double >::const_iterator priority_end() const;
