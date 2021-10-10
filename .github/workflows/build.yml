@@ -97,6 +97,12 @@ jobs:
         run: |
           GTEST_OUTPUT=xml:gtest-report-${{ runner.os }}.xml ctest . --verbose
 
+      - uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          name: gtest-results
+          path: ${{ runner.workspace }}/artifacts/gtest-report-${{ runner.os }}.xml
+
   publish-gtest-results:
     name: "Publish GTest Results"
     needs: build-and-test
@@ -107,12 +113,13 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
-          path: artifacts
+          name: gtest-results
+          path: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: artifacts/**/*.xml
+          files: ${{ runner.workspace }}/artifacts/gtest-results_downloaded/gtest-report-${{ runner.os }}.xml
 
   installation-test:
     name: CMake ${{ matrix.config.name }} Install
