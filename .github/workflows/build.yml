@@ -41,22 +41,22 @@ jobs:
           python3 -m pip install conan
 
       - name: Install Doxygen
-        if: ${{ runner.os }} == "Linux" || ${{ runner.os }} == "macos"
+        if: ${{ runner.os }} == "Linux" || ${{ runner.os }} == "macOS"
         shell: bash
         run: |
           if [[ ${{ runner.os }} == 'Linux' ]]; then
             sudo apt-get clean && sudo apt-get update && sudo apt-get install -y doxygen graphviz
-          elif [[ ${{ runner.os }} == 'macos' ]]; then
+          elif [[ ${{ runner.os }} == 'macOS' ]]; then
             brew install doxygen graphviz
           elif [[ ${{ runner.os }} == 'Windows' ]]; then
             echo "Deferring to chocolatey"
           fi
 
-      - name: Setup Chocolatey
+      - name: Chocolatey install Doxygen
         if: ${{ runner.os }} == "Windows"
         uses: crazy-max/ghaction-chocolatey@v1
         with:
-          args: install doxygen graphviz
+          args: install doxygen.install graphviz --no-progress
 
       - name: Source profile
         if: runner.os == 'Linux'
