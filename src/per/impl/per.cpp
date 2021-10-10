@@ -6,7 +6,7 @@
 void PrioritizedExperience::_recompute_max_weight(std::optional< double > triggering_weight)
 {
    if(not triggering_weight.has_value()
-      || not (std::abs(triggering_weight.value() - m_max_weight) < 1e-16)) {
+      || std::abs(triggering_weight.value() - m_max_weight) >= 1e-16) {
       return;
    }
    m_max_weight = std::max_element(
@@ -21,7 +21,7 @@ void PrioritizedExperience::_recompute_max_weight(std::optional< double > trigge
 void PrioritizedExperience::_recompute_max_priority(std::optional< double > triggering_prio)
 {
    if(not triggering_prio.has_value()
-      || not (std::abs(triggering_prio.value() - m_max_priority) < 1e-16)) {
+      || std::abs(triggering_prio.value() - m_max_priority) >= 1e-16) {
       return;
    }
    m_max_weight = *std::max_element(m_sumtree.priority_begin(), m_sumtree.priority_end());

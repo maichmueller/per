@@ -10,12 +10,11 @@ endif()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-conan_add_remote(NAME bincrafters URL
-                 https://api.bintray.com/conan/bincrafters/public-conan)
+find_program(CONAN conan PATHS ${CONAN_PATH})
 
 conan_cmake_run(
   CONANFILE deps/conanfile.txt
-  CONAN_COMMAND ${CONAN_PATH}
+  CONAN_COMMAND ${CONAN}
   ${CONAN_EXTRA_REQUIRES}
   OPTIONS
   ${CONAN_EXTRA_OPTIONS}
