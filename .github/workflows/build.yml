@@ -117,6 +117,8 @@ jobs:
           path: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
       - name: Display structure of downloaded files
         run: ls -R
+        working-directory: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
+        
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
