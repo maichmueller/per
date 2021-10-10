@@ -88,6 +88,7 @@ jobs:
           cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DWARNINGS_AS_ERRORS=TRUE
 
       - name: Build
+        shell: bash
         working-directory: ${{runner.workspace}}/build
         run: |
           cmake --build . --target all tests
@@ -118,11 +119,11 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
-        
+
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: ${{ runner.workspace }}/artifacts/gtest-results_downloaded/**/*.xml
+          files: ${{ runner.workspace }}/artifacts/gtest-results/*.xml
 
   installation-test:
     name: CMake ${{ matrix.config.name }} Install
