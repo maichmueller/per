@@ -26,6 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
+          path: per
           submodules: 'true'
 
 
@@ -33,14 +34,10 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install tree
-        shell: bash
-        run: |
-          sudo apt-get install tree
-
       - name: Display structure of workspace files
         shell: bash
         run: |
+          sudo apt-get install tree
           tree
 
       - name: Install conan
@@ -94,8 +91,8 @@ jobs:
           CXX: ${{ matrix.config.cxx }}
         run: >
           cmake
-          -S ${{ runner.workspace }}/per
-          -B ${{ runner.workspace }}/per/build
+          -S per
+          -B per/build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DWARNINGS_AS_ERRORS=TRUE
 
