@@ -84,11 +84,11 @@ jobs:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
         working-directory: ${{runner.workspace}}/build
-        run: |
-          cmake \
-          -S $GITHUB_WORKSPACE \
-          -B $GITHUB_WORKSPACE/build \
-          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
+        run: >
+          cmake
+          -S $GITHUB_WORKSPACE
+          -B $GITHUB_WORKSPACE/build
+          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} 
           -DWARNINGS_AS_ERRORS=TRUE
 
       - name: Build
