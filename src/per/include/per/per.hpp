@@ -12,7 +12,7 @@
 
 #include "sum_tree.hpp"
 
-class __attribute__((visibility("hidden"))) PrioritizedExperience {
+class PrioritizedExperience {
   public:
    using SumTreeType = SumTree< std::pair< py::object, double > >;
    using value_type = typename SumTreeType::value_type;
