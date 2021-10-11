@@ -117,13 +117,13 @@ jobs:
           name: gtest-results
           path: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls
         working-directory: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: ${{ runner.workspace }}/artifacts/gtest-results/*.xml
+          files: ${{ runner.workspace }}/artifacts/gtest-results_downloaded/*.xml
 
   installation-test:
     name: CMake ${{ matrix.config.name }} Install
