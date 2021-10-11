@@ -89,8 +89,6 @@ jobs:
           -DWARNINGS_AS_ERRORS=TRUE
 
       - name: Show build files
-        # Use a bash shell so we can use the same syntax for environment variable
-        # access regardless of the host operating system
         shell: bash
         run: |
           ls ./build
@@ -98,7 +96,13 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          cmake --build ./build --config ${{ matrix.config.build_type }} --target all tests
+          if [[ ${{ runner.os }} == 'Windows' ]]; then
+            all_target=ALL_BUILD
+          else
+            all_target=all
+          fi
+
+          cmake --build ./build --config ${{ matrix.config.build_type }} --target ${all_target} tests
 
       - name: Run Tests
         run: |
