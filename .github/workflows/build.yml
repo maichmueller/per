@@ -91,7 +91,7 @@ jobs:
         shell: bash
         working-directory: ${{runner.workspace}}/build
         run: |
-          cmake --build . --target all tests
+          cmake --build . --config ${{ matrix.config.build_type }} --target all tests
 
       - name: Run Tests
         working-directory: ${{runner.workspace}}/build
