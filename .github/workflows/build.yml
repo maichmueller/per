@@ -32,15 +32,6 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Display structure of workspace files
-        shell: bash
-        run: |
-          sudo apt-get install tree
-          tree
-      - name: dfsdfs
-        shell: bash
-        run: |
-          echo $GITHUB_WORKSPACE
       - name: Install conan
         shell: bash
         run: |
@@ -96,11 +87,6 @@ jobs:
           -B ./build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DWARNINGS_AS_ERRORS=TRUE
-
-      - name: Display structure of workspace files
-        shell: bash
-        run: |
-          tree
 
       - name: Build
         shell: bash
