@@ -14,7 +14,7 @@
     "cxx": "g++"
   },
   {
-    "name": "Ubuntu-20.04_GCC_10",
+    "name": "Ubuntu-20.04_GCC-10",
     "os": "ubuntu-20.04",
     "build_type": "Release",
     "cc": "gcc-10",
