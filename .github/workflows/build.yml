@@ -149,7 +149,7 @@ jobs:
       matrix:
         config: ${{ fromJson(needs.matrix.outputs.matrix) }}
     steps:
-      - name: Install
+      - name: Install for ${{ matrix.config.os }}
         working-directory: ${{runner.workspace}}/build
         run: |
           cmake --install . --prefix=$GITHUB_WORKSPACE/installation
