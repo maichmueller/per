@@ -108,15 +108,14 @@ jobs:
           cmake --build ./build --config ${{ matrix.config.build_type }} --target all tests
 
       - name: Run Tests
-        working-directory: ${{runner.workspace}}/build
         run: |
-          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml ctest . --verbose
+          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml ctest ./build --verbose
 
       - uses: actions/upload-artifact@v2
         if: success()
         with:
           name: gtest-results
-          path: ${{ runner.workspace }}/build/**/gtest-report-${{ matrix.config.name }}.xml
+          path: ./build/**/gtest-report-${{ matrix.config.name }}.xml
 
   publish-gtest-results:
     name: "Publish GTest Results"
@@ -129,11 +128,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: gtest-results
-          path: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
+          path: ./artifacts/gtest-results_downloaded
 
       - name: Display structure of downloaded files
         run: ls
-        working-directory: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
+        working-directory: ./artifacts/gtest-results_downloaded
 
       - name: Install tree
         shell: bash
@@ -142,14 +141,13 @@ jobs:
 
       - name: Display structure of workspace files
         shell: bash
-        working-directory: ${{ runner.workspace }}
         run: |
           tree
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: ${{ runner.workspace }}/**/*.xml
+          files: .artifacts/**/*.xml
 
   installation-test:
     name: CMake ${{ matrix.config.name }} Install
