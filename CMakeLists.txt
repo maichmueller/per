@@ -84,7 +84,6 @@ include(${CMAKE_CONFIG_FOLDER}/settings/Cache.cmake)
 # standard compiler warnings
 include(${CMAKE_CONFIG_FOLDER}/settings/CompilerWarnings.cmake)
 set_project_warnings(project_warnings)
-target_compile_options(project_warnings INTERFACE -Wno-attributes)
 
 # sanitizer options if supported by compiler
 include(${CMAKE_CONFIG_FOLDER}/settings/Sanitizers.cmake)
