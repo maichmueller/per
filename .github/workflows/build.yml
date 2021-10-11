@@ -116,9 +116,20 @@ jobs:
         with:
           name: gtest-results
           path: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
+
       - name: Display structure of downloaded files
-        run: ls -d
+        run: ls
         working-directory: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
+
+      - name: Install tree
+        shell: bash
+        run: |
+          sudo apt install tree
+
+      - name: Display structure of workspace files
+        shell: bash
+        run: |
+          tree .
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
