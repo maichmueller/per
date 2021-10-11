@@ -117,7 +117,7 @@ jobs:
           name: gtest-results
           path: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
       - name: Display structure of downloaded files
-        run: ls
+        run: ls -d
         working-directory: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
 
       - name: Publish Unit Test Results
