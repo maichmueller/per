@@ -135,7 +135,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: ${{ runner.workspace }}/artifacts/gtest-results_downloaded/*.xml
+          files: ${{ runner.workspace }}/**/*.xml
 
   installation-test:
     name: CMake ${{ matrix.config.name }} Install
