@@ -71,7 +71,7 @@ jobs:
       - name: Use cmake
         run: cmake --version
 
-      uses: ilammy/msvc-dev-cmd@v1
+      - uses: ilammy/msvc-dev-cmd@v1
         if: runner.os == 'Windows' && matrix.config.cxx == 'cl'
         with:
           arch: amd64
