@@ -109,7 +109,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml ctest ./build --verbose
+          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml ctest --test-dir ./build --verbose
 
       - uses: actions/upload-artifact@v2
         if: success()
