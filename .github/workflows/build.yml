@@ -85,8 +85,8 @@ jobs:
           CXX: ${{ matrix.config.cxx }}
         run: >
           cmake
-          -S ${{ runner.workspace }}
-          -B ${{ runner.workspace }}/build
+          -S ${{ runner.workspace }}/per
+          -B ${{ runner.workspace }}/per/build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DWARNINGS_AS_ERRORS=TRUE
 
