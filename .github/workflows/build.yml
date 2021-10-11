@@ -124,12 +124,13 @@ jobs:
       - name: Install tree
         shell: bash
         run: |
-          sudo apt install tree
+          sudo apt-get install tree
 
       - name: Display structure of workspace files
         shell: bash
+        working-directory: ${{ runner.workspace }}
         run: |
-          tree .
+          tree
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
