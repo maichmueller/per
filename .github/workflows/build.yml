@@ -28,11 +28,20 @@ jobs:
         with:
           submodules: 'true'
 
+
       - uses: actions/setup-python@v2
         with:
           python-version: '3.9'
 
+      - name: Install tree
+        shell: bash
+        run: |
+          sudo apt-get install tree
 
+      - name: Display structure of workspace files
+        shell: bash
+        run: |
+          tree
 
       - name: Install conan
         shell: bash
