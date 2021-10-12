@@ -86,7 +86,7 @@ jobs:
           -S .
           -B ./build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-          -DWARNINGS_AS_ERRORS=TRUE
+          -DWARNINGS_AS_ERRORS=FALSE
 
       - name: Show build files
         shell: bash
