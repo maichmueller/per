@@ -1,48 +1,48 @@
 [
   {
-    "name": "Windows Latest MSVC",
+    "name": "Windows-Latest_MSVC",
     "os": "windows-latest",
     "build_type": "Release",
     "cc": "cl",
     "cxx": "cl"
   },
   {
-    "name": "Windows Latest MinGW",
+    "name": "Windows-Latest_MinGW",
     "os": "windows-latest",
     "build_type": "Release",
     "cc": "gcc",
     "cxx": "g++"
   },
   {
-    "name": "Ubuntu 20.04 GCC-10",
+    "name": "Ubuntu-20.04_GCC-10",
     "os": "ubuntu-20.04",
     "build_type": "Release",
     "cc": "gcc-10",
     "cxx": "g++-10"
   },
   {
-    "name": "Ubuntu 20.04 GCC-9",
+    "name": "Ubuntu-20.04_GCC-9",
     "os": "ubuntu-20.04",
     "build_type": "Release",
     "cc": "gcc-9",
     "cxx": "g++-9"
   },
   {
-    "name": "Ubuntu 18.04 GCC-9",
+    "name": "Ubuntu-18.04_GCC-9",
     "os": "ubuntu-18.04",
     "build_type": "Release",
     "cc": "gcc-9",
     "cxx": "g++-9"
   },
   {
-    "name": "Ubuntu 18.04 GCC-10",
+    "name": "Ubuntu-18.04_GCC-10",
     "os": "ubuntu-18.04",
     "build_type": "Release",
     "cc": "gcc-10",
     "cxx": "g++-10"
   },
   {
-    "name": "macOS Latest Clang",
+    "name": "macOS-Latest_Clang",
     "os": "macos-latest",
     "build_type": "Release",
     "cc": "clang",

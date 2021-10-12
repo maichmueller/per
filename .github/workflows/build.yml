@@ -32,8 +32,6 @@ jobs:
         with:
           python-version: '3.9'
 
-
-
       - name: Install conan
         shell: bash
         run: |
@@ -71,10 +69,10 @@ jobs:
       - name: Use cmake
         run: cmake --version
 
-      - name: Create Build Environment
-        # Some projects don't allow in-source building, so create a separate build directory
-        # We'll use this as our working directory for all subsequent commands
-        run: cmake -E make_directory ${{runner.workspace}}/build
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows' && matrix.config.cxx == 'cl'
+        with:
+          arch: amd64
 
       - name: Configure CMake
         # Use a bash shell so we can use the same syntax for environment variable
@@ -83,26 +81,38 @@ jobs:
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
-        working-directory: ${{runner.workspace}}/build
+        run: >
+          cmake
+          -S .
+          -B ./build
+          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+          -DWARNINGS_AS_ERRORS=FALSE
+
+      - name: Show build files
+        shell: bash
         run: |
-          cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DWARNINGS_AS_ERRORS=TRUE
+          ls ./build
 
       - name: Build
         shell: bash
-        working-directory: ${{runner.workspace}}/build
         run: |
-          cmake --build . --config ${{ matrix.config.build_type }} --target all tests
+          if [[ ${{ runner.os }} == 'Windows' ]]; then
+            all_target=ALL_BUILD
+          else
+            all_target=all
+          fi
+
+          cmake --build ./build --config ${{ matrix.config.build_type }} --target ${all_target} tests
 
       - name: Run Tests
-        working-directory: ${{runner.workspace}}/build
         run: |
-          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml ctest . --verbose
+          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml ctest --test-dir ./build --verbose
 
       - uses: actions/upload-artifact@v2
         if: success()
         with:
           name: gtest-results
-          path: ${{ runner.workspace }}/build/**/gtest-report-${{ matrix.config.name }}.xml
+          path: ./build/**/gtest-report-${{ matrix.config.name }}.xml
 
   publish-gtest-results:
     name: "Publish GTest Results"
@@ -115,11 +125,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: gtest-results
-          path: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
+          path: ./artifacts/gtest-results_downloaded
 
       - name: Display structure of downloaded files
         run: ls
-        working-directory: ${{ runner.workspace }}/artifacts/gtest-results_downloaded
+        working-directory: ./artifacts/gtest-results_downloaded
 
       - name: Install tree
         shell: bash
@@ -128,14 +138,13 @@ jobs:
 
       - name: Display structure of workspace files
         shell: bash
-        working-directory: ${{ runner.workspace }}
         run: |
           tree
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: ${{ runner.workspace }}/**/*.xml
+          files: ./artifacts/**/*.xml
 
   installation-test:
     name: CMake ${{ matrix.config.name }} Install
@@ -145,7 +154,7 @@ jobs:
       matrix:
         config: ${{ fromJson(needs.matrix.outputs.matrix) }}
     steps:
-      - name: Install
+      - name: Install for ${{ matrix.config.os }}
         working-directory: ${{runner.workspace}}/build
         run: |
           cmake --install . --prefix=$GITHUB_WORKSPACE/installation
