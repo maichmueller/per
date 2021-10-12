@@ -40,3 +40,7 @@ target_link_libraries(${per_lib_name}_shared
         PUBLIC
         ${per_lib_name}_interface
         )
+
+set_target_properties(${per_lib_name}_shared PROPERTIES
+        CXX_VISIBILITY_PRESET hidden
+        )
