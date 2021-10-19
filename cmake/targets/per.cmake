@@ -34,13 +34,14 @@ target_link_libraries(${per_lib_name}_static
         PUBLIC
         ${per_lib_name}_interface
         )
+
 target_link_libraries(${per_lib_name}_shared
         PRIVATE
         project_warnings
         PUBLIC
         ${per_lib_name}_interface
         )
-
-set_target_properties(${per_lib_name}_shared PROPERTIES
+set_target_properties(${per_lib_name}_shared
+        PROPERTIES
         CXX_VISIBILITY_PRESET hidden
         )
