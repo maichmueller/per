@@ -10,9 +10,10 @@
 #include <random>
 #include <vector>
 
-#include "sum_tree.hpp"
+#include "per/sum_tree.hpp"
+#include "per/macro.hpp"
 
-class __attribute__((visibility("default"))) PrioritizedExperience {
+class PER_PUBLIC PrioritizedExperience {
   public:
    using SumTreeType = SumTree< std::pair< py::object, double > >;
    using value_type = typename SumTreeType::value_type;

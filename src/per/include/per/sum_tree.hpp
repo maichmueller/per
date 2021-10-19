@@ -8,10 +8,12 @@
 
 #include <optional>
 
+#include "per/macro.hpp"
+
 namespace py = pybind11;
 
 template < typename ValueType >
-class SumTree {
+class PER_PUBLIC SumTree {
   public:
    using value_type = ValueType;
 
