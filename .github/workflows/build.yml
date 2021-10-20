@@ -107,8 +107,7 @@ jobs:
       - name: Run Tests
         shell: bash
         run: |
-          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml
-          ctest --test-dir ./build --verbose
+          ctest --test-dir ./build --verbose --GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml --GTEST_COLOR=1 -C ${{ matrix.config.build_type }}
 
       - uses: actions/upload-artifact@v2
         if: success()
