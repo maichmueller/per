@@ -16,7 +16,6 @@ target_sources(${per_lib}_shared PRIVATE ${LIBRARY_SOURCES})
 
 target_include_directories(${per_lib}_interface
         INTERFACE
-        ${Python_INCLUDE_DIRS}
         $<BUILD_INTERFACE:${PROJECT_PER_INCLUDE_DIR}>
         $<INSTALL_INTERFACE:include>
         )
@@ -24,8 +23,8 @@ target_include_directories(${per_lib}_interface
 target_link_libraries(${per_lib}_interface
         INTERFACE
         project_options
-        CONAN_PKG::pybind11
-        ${Python_LIBRARIES}
+        pybind11::module
+        $<$<NOT:$<BOOL:USE_PYBIND11_FINDPYTHON>>:Python3::Module>
         )
 
 target_link_libraries(${per_lib}_static

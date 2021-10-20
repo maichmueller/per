@@ -7,3 +7,5 @@ _skbuild
 **/*.egg-info/**
 
 *.so
+
+*.pyd

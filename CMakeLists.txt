@@ -39,6 +39,7 @@ option(ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
 option(ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
 option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" OFF)
 option(ENABLE_TESTING "Enable Test Builds" ON)
+option(USE_PYBIND11_FINDPYTHON "Use pybind11 to search for the python library" OFF)
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 
 message(STATUS "PER project files directory: ${PROJECT_SRC_DIR}")
@@ -112,10 +113,12 @@ if (ENABLE_PCH)
             INTERFACE <vector> <string> <map> <utility> <memory> <array> <list> <stack>)
 endif ()
 
-# this could be used:
-#find_package(Python3 COMPONENTS Interpreter Development)
-# but better to just let pybind11 do it:
-set(PYBIND11_FINDPYTHON TRUE)
+if (USE_PYBIND11_FINDPYTHON)
+    set(PYBIND11_FINDPYTHON TRUE)
+else ()
+    set(PYBIND11_FINDPYTHON FALSE)
+    find_package(Python3 COMPONENTS Interpreter Development.Module)
+endif ()
 find_package(pybind11 REQUIRED)
 
 include(${CMAKE_CONFIG_FOLDER}/targets/per.cmake)
