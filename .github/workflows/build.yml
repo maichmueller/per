@@ -157,6 +157,7 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     needs: [ matrix, build-and-test ]
     strategy:
+      fail-fast: false
       matrix:
         config: ${{ fromJson(needs.matrix.outputs.matrix) }}
     steps:
