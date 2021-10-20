@@ -155,7 +155,7 @@ jobs:
   installation-test:
     name: CMake ${{ matrix.config.name }} Install
     runs-on: ${{ matrix.config.os }}
-    needs: build-and-test
+    needs: [ matrix, build-and-test ]
     strategy:
       matrix:
         config: ${{ fromJson(needs.matrix.outputs.matrix) }}
