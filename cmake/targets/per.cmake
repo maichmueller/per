@@ -5,43 +5,43 @@ set(LIBRARY_SOURCES
         )
 list(TRANSFORM LIBRARY_SOURCES PREPEND "${PROJECT_PER_SRC_DIR}/")
 
-add_library(${per_lib_name}_interface INTERFACE)
-add_library(${per_lib_name}_static STATIC)
-add_library(${per_lib_name}_shared SHARED)
+add_library(${per_lib}_interface INTERFACE)
+add_library(${per_lib}_static STATIC)
+add_library(${per_lib}_shared SHARED)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
-target_sources(${per_lib_name}_static PRIVATE ${LIBRARY_SOURCES})
-target_sources(${per_lib_name}_shared PRIVATE ${LIBRARY_SOURCES})
+target_sources(${per_lib}_static PRIVATE ${LIBRARY_SOURCES})
+target_sources(${per_lib}_shared PRIVATE ${LIBRARY_SOURCES})
 
-target_include_directories(${per_lib_name}_interface
+target_include_directories(${per_lib}_interface
         INTERFACE
         ${Python_INCLUDE_DIRS}
         $<BUILD_INTERFACE:${PROJECT_PER_INCLUDE_DIR}>
         $<INSTALL_INTERFACE:include>
         )
 
-target_link_libraries(${per_lib_name}_interface
+target_link_libraries(${per_lib}_interface
         INTERFACE
         project_options
         CONAN_PKG::pybind11
         ${Python_LIBRARIES}
         )
 
-target_link_libraries(${per_lib_name}_static
+target_link_libraries(${per_lib}_static
         PRIVATE
         project_warnings
         PUBLIC
-        ${per_lib_name}_interface
+        ${per_lib}_interface
         )
 
-target_link_libraries(${per_lib_name}_shared
+target_link_libraries(${per_lib}_shared
         PRIVATE
         project_warnings
         PUBLIC
-        ${per_lib_name}_interface
+        ${per_lib}_interface
         )
-set_target_properties(${per_lib_name}_shared
+set_target_properties(${per_lib}_shared
         PROPERTIES
         CXX_VISIBILITY_PRESET hidden
         )

@@ -6,19 +6,19 @@ set(TEST_SOURCES
         )
 list(TRANSFORM TEST_SOURCES PREPEND "${PROJECT_TEST_DIR}/")
 
-add_executable(${per_test_bin_name} ${TEST_SOURCES})
+add_executable(${per_test} ${TEST_SOURCES})
 
-set_target_properties(${per_test_bin_name} PROPERTIES
+set_target_properties(${per_test} PROPERTIES
         EXCLUDE_FROM_ALL True  # don't build tests when ALL is asked to be built. Only on demand.
         )
 
-target_link_libraries(${per_test_bin_name}
+target_link_libraries(${per_test}
         PRIVATE
-        ${per_lib_name}_static
+        ${per_lib}_static
         CONAN_PKG::gtest
         )
 
 add_test(
         NAME Test_${PROJECT_NAME}
-        COMMAND ${per_test_bin_name}
+        COMMAND ${per_test}
 )

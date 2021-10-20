@@ -107,8 +107,8 @@ jobs:
       - name: Run Tests
         shell: bash
         run: |
-          echo "GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml" >> $GITHUB_ENV
-          echo "GTEST_COLOR=1" >> $GITHUB_ENV
+          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml
+          GTEST_COLOR=1
           ctest --test-dir ./build --verbose -C ${{ matrix.config.build_type }}
 
       - uses: actions/upload-artifact@v2

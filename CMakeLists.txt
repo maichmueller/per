@@ -9,9 +9,9 @@ string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 set(PROJ_CXX_STD_FEATURE cxx_std_17)
 set(PROJ_CXX_STANDARD C++17)
 
-set(per_lib_name per++)
-set(per_python_module_name pyper)
-set(per_test_bin_name tests)
+set(per_lib per++)
+set(per_pymodule pyper)
+set(per_test tests)
 set(PROJECT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(PROJECT_TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test")
 set(PROJECT_PER_DIR "${PROJECT_SRC_DIR}/per")
@@ -70,7 +70,6 @@ endif ()
 target_compile_options(project_options
         INTERFACE
         "$<$<CXX_COMPILER_ID:MSVC>:/permissive->"
-
         )
 
 # Set up some extra Conan dependencies based on our needs
@@ -125,7 +124,7 @@ include(${CMAKE_CONFIG_FOLDER}/targets/pyper.cmake)
 if (SKBUILD)
     message("Building with scikit-build. Disabling Test target.")
     # install locally so that sciki-build can correctly install it
-    install(TARGETS ${per_python_module_name} LIBRARY DESTINATION .)
+    install(TARGETS ${per_pymodule} LIBRARY DESTINATION .)
 
 else ()
     if (ENABLE_TESTING)
@@ -139,8 +138,8 @@ else ()
 
     # in order to use the latest build of the library for a development package install (pip install . -e),
     # we have to install it in the package folder, where it is used
-    install(TARGETS ${per_python_module_name} LIBRARY DESTINATION ${PROJECT_PYPER_DIR})
-    add_custom_target(Copy_${per_python_module_name}_to_destination
+    install(TARGETS ${per_pymodule} LIBRARY DESTINATION ${PROJECT_PYPER_DIR})
+    add_custom_target(Copy_${per_pymodule}_to_destination
             COMMAND ${CMAKE_COMMAND} --install)
 
     include(CMakePackageConfigHelpers)
@@ -151,7 +150,7 @@ else ()
     )
     install(TARGETS project_options EXPORT ${PROJECT_NAME_LOWERCASE}Options)
     install(TARGETS project_warnings EXPORT ${PROJECT_NAME_LOWERCASE}Warnings)
-    install(TARGETS ${per_lib_name}_interface ${per_lib_name}_shared ${per_lib_name}_static
+    install(TARGETS ${per_lib}_interface ${per_lib}_shared ${per_lib}_static
             EXPORT ${PROJECT_NAME_LOWERCASE}Targets
             LIBRARY DESTINATION lib COMPONENT Runtime
             ARCHIVE DESTINATION lib COMPONENT Development
