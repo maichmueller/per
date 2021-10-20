@@ -66,10 +66,11 @@ jobs:
         with:
           cmake-version: '3.21'
 
-      - name: Use cmake
-        run: cmake --version
+      - name: Setup Ninja Generator
+        uses: seanmiddleditch/gha-setup-ninja@master
 
-      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Configure Windows compile environment
+        uses: ilammy/msvc-dev-cmd@v1
         if: runner.os == 'Windows' && matrix.config.cxx == 'cl'
         with:
           arch: amd64
@@ -102,7 +103,7 @@ jobs:
             all_target=all
           fi
 
-          cmake --build ./build --config ${{ matrix.config.build_type }} --target ${all_target} tests
+          cmake -G Ninja --build ./build --config ${{ matrix.config.build_type }} --target ${all_target} tests
 
       - name: Run Tests
         shell: bash
