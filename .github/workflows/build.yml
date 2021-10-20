@@ -153,7 +153,7 @@ jobs:
           files: ./artifacts/**/*.xml
 
   installation-test:
-    name: CMake ${{ matrix.config.name }} Install
+    name: Installation on ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     needs: [ matrix, build-and-test ]
     strategy:
@@ -162,7 +162,6 @@ jobs:
         config: ${{ fromJson(needs.matrix.outputs.matrix) }}
     steps:
       - name: Install for ${{ matrix.config.os }}
-        working-directory: ${{runner.workspace}}/build
         run: |
           cmake --install . --prefix=$GITHUB_WORKSPACE/installation
 
