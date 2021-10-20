@@ -105,8 +105,10 @@ jobs:
           cmake --build ./build --config ${{ matrix.config.build_type }} --target ${all_target} tests
 
       - name: Run Tests
+        shell: bash
         run: |
-          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml ctest --test-dir ./build --verbose
+          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml
+          ctest --test-dir ./build --verbose
 
       - uses: actions/upload-artifact@v2
         if: success()
