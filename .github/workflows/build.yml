@@ -163,12 +163,13 @@ jobs:
     steps:
       - name: Install for ${{ matrix.config.os }}
         run: |
-          cmake --install . --prefix=$GITHUB_WORKSPACE/installation
+          cmake --install ./build --prefix=$GITHUB_WORKSPACE/installation
 
       - name: List Install Directory
         working-directory: ${{runner.workspace}}/installation
         run: |
           ls
+          ls build
 
 
 
