@@ -20,9 +20,8 @@ set(PROJECT_PER_SRC_DIR "${PROJECT_PER_DIR}/impl")
 set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
 set(PROJECT_PER_BINDING_DIR "${PROJECT_PER_DIR}/binding")
 set(CMAKE_CONFIG_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-if(MSVC)
-    add_compile_options("/permissive")
-endif()
+
+# options
 
 option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 option(ENABLE_BUILD_DOCS "Enable building the docs. Requires doxygen to be installed on the system" OFF)
@@ -68,6 +67,11 @@ target_compile_features(project_options
 if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" AND ENABLE_BUILD_WITH_TIME_TRACE)
     add_compile_definitions(project_options INTERFACE -ftime-trace)
 endif ()
+target_compile_options(project_options
+        INTERFACE
+        "$<$<CXX_COMPILER_ID:MSVC>:/permissive->"
+
+        )
 
 # Set up some extra Conan dependencies based on our needs
 # before loading Conan
