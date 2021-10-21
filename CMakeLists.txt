@@ -43,8 +43,8 @@ option(USE_PYBIND11_FINDPYTHON "Use pybind11 to search for the python library" O
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 
 message(STATUS "PER project files directory: ${PROJECT_SRC_DIR}")
-message(STATUS "PER include directory: ${PROJECT_PER_SRC_DIR}")
-message(STATUS "PER src directory: ${PROJECT_PER_INCLUDE_DIR}")
+message(STATUS "PER src directory: ${PROJECT_PER_SRC_DIR}")
+message(STATUS "PER include directory: ${PROJECT_PER_INCLUDE_DIR}")
 message(STATUS "PER bindings directory: ${PROJECT_PER_BINDING_DIR}")
 
 message("C++ Compiler: ${CMAKE_CXX_COMPILER}")
@@ -68,10 +68,21 @@ target_compile_features(project_options
 if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" AND ENABLE_BUILD_WITH_TIME_TRACE)
     add_compile_definitions(project_options INTERFACE -ftime-trace)
 endif ()
-target_compile_options(project_options
-        INTERFACE
-        "$<$<CXX_COMPILER_ID:MSVC>:/permissive->"
-        )
+string(
+        APPEND _options
+        "$<$<CXX_COMPILER_ID:MSVC>:"
+            "/permissive-;"
+            "$<$<CONFIG:RELEASE>:/O2>"
+        ">"
+        "$<$<CXX_COMPILER_ID:Clang>:"
+            "$<$<CONFIG:RELEASE>:-O3>"
+            "$<$<PLATFORM_ID:Darwin>:-stdlib=libc++>"
+        ">"
+        "$<$<CXX_COMPILER_ID:GNU>:"
+            "$<$<CONFIG:RELEASE>:-O3>"
+        ">"
+)
+target_compile_options(project_options INTERFACE "${_options}")
 
 # Set up some extra Conan dependencies based on our needs
 # before loading Conan
@@ -150,14 +161,13 @@ else ()
     install(TARGETS project_warnings EXPORT ${PROJECT_NAME_LOWERCASE}Warnings)
     install(TARGETS ${per_lib}_interface ${per_lib}_shared ${per_lib}_static
             EXPORT ${PROJECT_NAME_LOWERCASE}Targets
+            RUNTIME DESTINATION bin COMPONENT Runtime
+            BUNDLE DESTINATION bin COMPONENT Runtime
             LIBRARY DESTINATION lib COMPONENT Runtime
             ARCHIVE DESTINATION lib COMPONENT Development
-            RUNTIME DESTINATION bin COMPONENT Runtime
             PUBLIC_HEADER DESTINATION include COMPONENT Development
-            BUNDLE DESTINATION bin COMPONENT Runtime
             )
 
-    include(CMakePackageConfigHelpers)
     configure_package_config_file(
             "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME_LOWERCASE}Config.cmake.in"
             "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}Config.cmake"
@@ -169,8 +179,9 @@ else ()
     install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}ConfigVersion.cmake"
             "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}Config.cmake"
             DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE})
-    install(DIRECTORY ${PROJECT_PER_INCLUDE_DIR} DESTINATION include)
+    # this installation assumes that the project has an eponymous include directory for the project c++ library
+    # we install that sub-directory instead of PROJECT_PER_INCLUDE_DIR, in order to avoid an
+    # include/include/proj_name_inc_dir situation and get the correct include/proj_name_inc_dir.
+    install(DIRECTORY ${PROJECT_PER_INCLUDE_DIR}/${PROJECT_NAME_LOWERCASE} DESTINATION include)
 
 endif ()
-
-
