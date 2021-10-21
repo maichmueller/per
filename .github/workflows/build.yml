@@ -81,11 +81,11 @@ jobs:
           CXX: ${{ matrix.config.cxx }}
         run: >
           cmake
-          -A x64
           -S .
           -B ./build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DWARNINGS_AS_ERRORS=FALSE
+          -DUSE_PYBIND11_FINDPYTHON=TRUE
 
       - name: Show build files
         shell: bash
