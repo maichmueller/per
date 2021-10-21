@@ -13,7 +13,7 @@
 namespace py = pybind11;
 
 template < typename ValueType >
-class PER_PUBLIC SumTree {
+class SumTree {
   public:
    using value_type = ValueType;
 

@@ -3,11 +3,11 @@
 #define PER_MACRO_HPP
 
 #ifndef PER_PUBLIC
-#ifdef MSVC_VER
+#if defined(MSVC_VER)
 #define PER_PUBLIC __declspec(dllexport)
-#elifdef __GNUG__
+#elif defined(__GNUG__)
 #define PER_PUBLIC __attribute__((visibility("default")))
-#elifdef __clang__
+#elif defined(__clang__)
 #define PER_PUBLIC __attribute__((visibility("default")))
 #else
 #define PER_PUBLIC

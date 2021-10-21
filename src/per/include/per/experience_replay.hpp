@@ -2,9 +2,7 @@
 #ifndef PER_EXPERIENCE_REPLAY_HPP
 #define PER_EXPERIENCE_REPLAY_HPP
 
-//#include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 
 #include <random>
 #include <vector>

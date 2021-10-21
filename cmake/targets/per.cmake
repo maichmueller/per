@@ -24,7 +24,7 @@ target_link_libraries(${per_lib}_interface
         INTERFACE
         project_options
         pybind11::module
-        $<$<NOT:$<BOOL:USE_PYBIND11_FINDPYTHON>>:Python3::Module>
+        $<$<NOT:$<BOOL:USE_PYBIND11_FINDPYTHON>>:Python3::Module >
         )
 
 target_link_libraries(${per_lib}_static
