@@ -66,9 +66,6 @@ jobs:
         with:
           cmake-version: '3.21'
 
-      - name: Install Ninja Build Generator
-        uses: seanmiddleditch/gha-setup-ninja@master
-
       - name: Configure Windows compile environment
         uses: ilammy/msvc-dev-cmd@v1
         if: runner.os == 'Windows' && matrix.config.cxx == 'cl'
