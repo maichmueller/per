@@ -99,7 +99,7 @@ jobs:
         shell: bash
         run: |
           if [[ ${{ runner.os }} == 'Windows' ]]; then
-            all_target=ALL_BUILD
+            all_target=all
           else
             all_target=all
           fi
