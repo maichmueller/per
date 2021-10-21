@@ -66,12 +66,6 @@ jobs:
         with:
           cmake-version: '3.21'
 
-      - name: Configure Windows compile environment
-        uses: ilammy/msvc-dev-cmd@v1
-        if: runner.os == 'Windows' && matrix.config.cxx == 'cl'
-        with:
-          arch: amd64
-
       - name: Configure CMake
         # Use a bash shell so we can use the same syntax for environment variable
         # access regardless of the host operating system
