@@ -120,6 +120,7 @@ jobs:
           ctest \
           --test-dir ./build \
           --verbose \
+          --output-on-failure \
           -C ${{ matrix.config.build_type }}
 
       - uses: actions/upload-artifact@v2
