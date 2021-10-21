@@ -97,7 +97,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          if [[ Windows == 'Windows' ]]; then
+          if [[ ${{ runner.os }} == 'Windows' ]]; then
             all_target=ALL_BUILD
           else
             all_target=all
@@ -170,7 +170,7 @@ jobs:
         working-directory: ${{runner.workspace}}/installation
         run: |
           ls
-          ls build   
+          ls build
 
 
 
