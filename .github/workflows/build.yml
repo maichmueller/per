@@ -84,7 +84,6 @@ jobs:
           CXX: ${{ matrix.config.cxx }}
         run: >
           cmake
-#          -G Ninja
           -S .
           -B ./build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
