@@ -84,7 +84,7 @@ jobs:
           CXX: ${{ matrix.config.cxx }}
         run: >
           cmake
-          -G Ninja
+#          -G Ninja
           -S .
           -B ./build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
@@ -98,10 +98,15 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          cmake --build ./build --config ${{ matrix.config.build_type }} --target ${all_target} tests
+          if [[ Windows == 'Windows' ]]; then
+            all_target=ALL_BUILD
+          else
+            all_target=all
+          fi
 
-      - name: Run Tests (Linux/Mac)
-        if: runner.os == 'Linux' || runner.os == 'macOS'
+          cmake --build ./build --config Release --target ${all_target} tests
+
+      - name: Run Tests
         shell: bash
         run: >
           GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml
@@ -109,18 +114,6 @@ jobs:
           ctest
           --test-dir ./build
           --verbose
-          -C ${{ matrix.config.build_type }}
-
-      - name: Run Tests (Windows)
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          export GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml
-          export GTEST_COLOR=1
-          ctest \
-          --test-dir ./build \
-          --verbose \
-          --output-on-failure \
           -C ${{ matrix.config.build_type }}
 
       - uses: actions/upload-artifact@v2
