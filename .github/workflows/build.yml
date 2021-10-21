@@ -100,7 +100,8 @@ jobs:
         run: |
           cmake --build ./build --config ${{ matrix.config.build_type }} --target ${all_target} tests
 
-      - name: Run Tests
+      - name: Run Tests (Linux/Mac)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
         shell: bash
         run: >
           GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml
@@ -108,6 +109,17 @@ jobs:
           ctest
           --test-dir ./build
           --verbose
+          -C ${{ matrix.config.build_type }}
+
+      - name: Run Tests (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          export GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml
+          export GTEST_COLOR=1
+          ctest \
+          --test-dir ./build \
+          --verbose \
           -C ${{ matrix.config.build_type }}
 
       - uses: actions/upload-artifact@v2
