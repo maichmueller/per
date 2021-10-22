@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.16)
 
 project(PER VERSION 0.1 LANGUAGES CXX)
 
@@ -84,6 +84,7 @@ string(
 )
 target_compile_options(project_options INTERFACE "${_options}")
 
+
 # Set up some extra Conan dependencies based on our needs
 # before loading Conan
 set(CONAN_EXTRA_REQUIRES "")
@@ -94,6 +95,7 @@ run_conan()
 include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
+# set the standard project settings
 include(cmake/settings/StandardProjectSettings.cmake)
 
 # enable cache system

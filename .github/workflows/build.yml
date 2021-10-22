@@ -14,7 +14,7 @@ jobs:
           TASKS=$(echo $(cat .github/workflows/build-matrix.json) | sed 's/ //g' )
           echo "::set-output name=matrix::$TASKS"
 
-  build-and-test:
+  build-test-install:
     needs: matrix
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
@@ -113,15 +113,46 @@ jobs:
           --verbose
           -C ${{ matrix.config.build_type }}
 
-      - uses: actions/upload-artifact@v2
+      - name: Upload test result artifacts
+        uses: actions/upload-artifact@v2
         if: success()
         with:
           name: gtest-results
           path: ./build/**/gtest-report-${{ matrix.config.name }}.xml
+          retention-days: 1
+
+      - name: Install
+        run: |
+          cmake --install ./build --prefix=$GITHUB_WORKSPACE/installation_test_dir
+
+      - name: Configure CMake for Test Project
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: bash
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+        run: >
+          cmake
+          -S ./test/install
+          -B ./build_install
+          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+          -Dper_path=$GITHUB_WORKSPACE/installation_test_dir
+
+      - name: Build
+        shell: bash
+        run: |
+          cmake --build ./build_install --config Release --target per_install_test
+
+      - name: Run Install Test Executable
+        shell: bash
+        run: >
+          ./build_install/bin/per_install_test*
+
 
   publish-gtest-results:
     name: "Publish GTest Results"
-    needs: build-and-test
+    needs: build-test-install
     runs-on: ubuntu-latest
     if: always()
 
@@ -136,39 +167,7 @@ jobs:
         run: ls
         working-directory: ./artifacts/gtest-results_downloaded
 
-      - name: Install tree
-        shell: bash
-        run: |
-          sudo apt-get install tree
-
-      - name: Display structure of workspace files
-        shell: bash
-        run: |
-          tree
-
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           files: ./artifacts/**/*.xml
-
-  installation-test:
-    name: Installation on ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
-    needs: [ matrix, build-and-test ]
-    strategy:
-      fail-fast: false
-      matrix:
-        config: ${{ fromJson(needs.matrix.outputs.matrix) }}
-    steps:
-      - name: Install for ${{ matrix.config.os }}
-        run: |
-          cmake --install ./build --prefix=$GITHUB_WORKSPACE/installation
-
-      - name: List Install Directory
-        working-directory: ${{runner.workspace}}/installation
-        run: |
-          ls
-          ls build
-
-
-
