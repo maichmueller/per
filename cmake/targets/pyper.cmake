@@ -5,7 +5,7 @@ set(PYTHON_MODULE_SOURCES
         )
 list(TRANSFORM PYTHON_MODULE_SOURCES PREPEND "${PROJECT_PER_BINDING_DIR}/")
 
-pybind11_add_module(${per_pymodule} ${LIBRARY_SOURCES} ${PYTHON_MODULE_SOURCES})
+pybind11_add_module(${per_pymodule} MODULE EXCLUDE_FROM_ALL ${LIBRARY_SOURCES} ${PYTHON_MODULE_SOURCES})
 
 set_target_properties(${per_pymodule} PROPERTIES
         LIBRARY_OUTPUT_NAME _pyper

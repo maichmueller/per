@@ -14,12 +14,13 @@ set(per_pymodule pyper)
 set(per_test tests)
 set(PROJECT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(PROJECT_TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test")
-set(PROJECT_PER_DIR "${PROJECT_SRC_DIR}/per")
+set(PROJECT_PER_DIR "${PROJECT_SRC_DIR}/libper")
 set(PROJECT_PYPER_DIR "${PROJECT_SRC_DIR}/pyper")
 set(PROJECT_PER_SRC_DIR "${PROJECT_PER_DIR}/impl")
 set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
 set(PROJECT_PER_BINDING_DIR "${PROJECT_PER_DIR}/binding")
 set(CMAKE_CONFIG_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(PUBLIC_HEADER ${PROJECT_PER_INCLUDE_DIR})
 
 # options
 
@@ -71,15 +72,15 @@ endif ()
 string(
         APPEND _options
         "$<$<CXX_COMPILER_ID:MSVC>:"
-            "/permissive-;"
-            "$<$<CONFIG:RELEASE>:/O2>"
+        "/permissive-;"
+        "$<$<CONFIG:RELEASE>:/O2>"
         ">"
         "$<$<CXX_COMPILER_ID:Clang>:"
-            "$<$<CONFIG:RELEASE>:-O3>"
-            "$<$<PLATFORM_ID:Darwin>:-stdlib=libc++>"
+        "$<$<CONFIG:RELEASE>:-O3>"
+        "$<$<PLATFORM_ID:Darwin>:-stdlib=libc++>"
         ">"
         "$<$<CXX_COMPILER_ID:GNU>:"
-            "$<$<CONFIG:RELEASE>:-O3>"
+        "$<$<CONFIG:RELEASE>:-O3>"
         ">"
 )
 target_compile_options(project_options INTERFACE "${_options}")
@@ -147,43 +148,79 @@ else ()
         include(${CMAKE_CONFIG_FOLDER}/targets/tests.cmake)
     endif ()
 
-    # in order to use the latest build of the library for a development package install (pip install . -e),
-    # we have to install it in the package folder, where it is used
-    install(TARGETS ${per_pymodule} LIBRARY DESTINATION ${PROJECT_PYPER_DIR})
-    add_custom_target(Copy_${per_pymodule}_to_destination
-            COMMAND ${CMAKE_COMMAND} --install)
 
     include(CMakePackageConfigHelpers)
+    include(GNUInstallDirs)
+
     write_basic_package_version_file(
             "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}ConfigVersion.cmake"
             VERSION ${PROJECT_VERSION}
             COMPATIBILITY AnyNewerVersion
     )
-    install(TARGETS project_options EXPORT ${PROJECT_NAME_LOWERCASE}Options)
-    install(TARGETS project_warnings EXPORT ${PROJECT_NAME_LOWERCASE}Warnings)
-    install(TARGETS ${per_lib}_interface ${per_lib}_shared ${per_lib}_static
+    # CMake requires all interface dependencies of our library targets, including options and warnings, to be exported.
+    install(
+            TARGETS project_options
+            EXPORT ${PROJECT_NAME_LOWERCASE}Options
+    )
+    install(
+            TARGETS project_warnings
+            EXPORT ${PROJECT_NAME_LOWERCASE}Warnings
+    )
+    install(
+            TARGETS ${per_lib}_interface ${per_lib}_shared ${per_lib}_static
             EXPORT ${PROJECT_NAME_LOWERCASE}Targets
-            RUNTIME DESTINATION bin COMPONENT Runtime
-            BUNDLE DESTINATION bin COMPONENT Runtime
-            LIBRARY DESTINATION lib COMPONENT Runtime
-            ARCHIVE DESTINATION lib COMPONENT Development
-            PUBLIC_HEADER DESTINATION include COMPONENT Development
-            )
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+            BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Development
+    )
+    # to use the latest build of the library for a development package install (pip install path/to/project -e),
+    # we configure an optional install component of the python extension in-source
+    install(
+            TARGETS ${per_pymodule}
+            LIBRARY DESTINATION ${PROJECT_PYPER_DIR}
+            COMPONENT PyExtension_inplace
+            OPTIONAL
+    )
+    # this target can be called conveniently from within IDEs to replace the current build of a development install
+    add_custom_target(
+            install_${per_pymodule}_insource
+            COMMAND ${CMAKE_COMMAND} --install . --component PyExtension_inplace
+            DEPENDS ${per_pymodule}
+    )
 
     configure_package_config_file(
             "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME_LOWERCASE}Config.cmake.in"
             "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}Config.cmake"
-            INSTALL_DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE}
+            INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME_LOWERCASE}/cmake/
     )
-    install(EXPORT ${PROJECT_NAME_LOWERCASE}Options DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE})
-    install(EXPORT ${PROJECT_NAME_LOWERCASE}Warnings DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE})
-    install(EXPORT ${PROJECT_NAME_LOWERCASE}Targets DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE})
-    install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}ConfigVersion.cmake"
+
+    install(
+            EXPORT ${PROJECT_NAME_LOWERCASE}Options
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME_LOWERCASE}/cmake/
+            NAMESPACE ${PROJECT_NAME_LOWERCASE}::
+    )
+    install(
+            EXPORT ${PROJECT_NAME_LOWERCASE}Warnings
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME_LOWERCASE}/cmake/
+            NAMESPACE ${PROJECT_NAME_LOWERCASE}::
+    )
+    install(
+            EXPORT ${PROJECT_NAME_LOWERCASE}Targets
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME_LOWERCASE}/cmake/
+            NAMESPACE ${PROJECT_NAME_LOWERCASE}::
+    )
+
+    install(
+            FILES
+            "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}ConfigVersion.cmake"
             "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}Config.cmake"
-            DESTINATION lib/cmake/${PROJECT_NAME_LOWERCASE})
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME_LOWERCASE}/cmake/
+    )
     # this installation assumes that the project has an eponymous include directory for the project c++ library
     # we install that sub-directory instead of PROJECT_PER_INCLUDE_DIR, in order to avoid an
-    # include/include/proj_name_inc_dir situation and get the correct include/proj_name_inc_dir.
+    # include/include/proj_name situation and get the correct include/proj_name.
     install(DIRECTORY ${PROJECT_PER_INCLUDE_DIR}/${PROJECT_NAME_LOWERCASE} DESTINATION include)
 
 endif ()
