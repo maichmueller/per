@@ -123,12 +123,9 @@ jobs:
 
       - name: Install
         run: |
-          cmake --install ./build --prefix=${{ runner.workspace }}/installation_test_dir
+          cmake --install ./build
 
-      - name: Show installed files
-        shell: bash
-        run: |
-          ls ${{ runner.workspace }}/installation_test_dir
+
 
       - name: Configure CMake for Test Project
         # Use a bash shell so we can use the same syntax for environment variable
@@ -142,7 +139,6 @@ jobs:
           -S ./test/install
           -B ./build_install
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-          -Dper_path=${{ runner.workspace }}/installation_test_dir
 
       - name: Build
         shell: bash
