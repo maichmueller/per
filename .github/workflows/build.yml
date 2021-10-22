@@ -128,8 +128,8 @@ jobs:
       - name: Show installed files
         shell: bash
         run: |
-          ls $GITHUB_WORKSPACE
-          ls $GITHUB_WORKSPACE/installation_test_dir
+          ls ${{ runner.workspace }}
+          ls ${{ runner.workspace }}/installation_test_dir
 
       - name: Configure CMake for Test Project
         # Use a bash shell so we can use the same syntax for environment variable
@@ -143,7 +143,7 @@ jobs:
           -S ./test/install
           -B ./build_install
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-          -Dper_path=$GITHUB_WORKSPACE/installation_test_dir
+          -Dper_path=${{ runner.workspace }}/installation_test_dir
 
       - name: Build
         shell: bash
