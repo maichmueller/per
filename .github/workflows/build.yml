@@ -122,10 +122,9 @@ jobs:
           retention-days: 1
 
       - name: Install
+        shell: bash
         run: |
-          cmake --install ./build
-
-
+          cmake --install ./build --prefix=installation_test_dir
 
       - name: Configure CMake for Test Project
         # Use a bash shell so we can use the same syntax for environment variable
@@ -139,6 +138,7 @@ jobs:
           -S ./test/install
           -B ./build_install
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+          -Dper_path=./build/installation_test_dir
 
       - name: Build
         shell: bash
