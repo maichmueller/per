@@ -12,6 +12,9 @@ set(PROJ_CXX_STANDARD C++17)
 set(per_lib per++)
 set(per_pymodule pyper)
 set(per_test tests)
+
+set(CONANFILE conanfile.txt)
+set(DEPENDENCY_DIR deps)  # has to be relative to CMAKE_CURRENT_SOURCE_DIR
 set(PROJECT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(PROJECT_TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test")
 set(PROJECT_PER_DIR "${PROJECT_SRC_DIR}/libper")
@@ -19,8 +22,7 @@ set(PROJECT_PYPER_DIR "${PROJECT_SRC_DIR}/pyper")
 set(PROJECT_PER_SRC_DIR "${PROJECT_PER_DIR}/impl")
 set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
 set(PROJECT_PER_BINDING_DIR "${PROJECT_PER_DIR}/binding")
-set(CMAKE_CONFIG_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-set(PUBLIC_HEADER ${PROJECT_PER_INCLUDE_DIR})
+set(_cmake_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # options
 
@@ -91,7 +93,7 @@ target_compile_options(project_options INTERFACE "${_options}")
 set(CONAN_EXTRA_REQUIRES "")
 set(CONAN_EXTRA_OPTIONS "")
 
-include(${CMAKE_CONFIG_FOLDER}/settings/Conan.cmake)
+include(${_cmake_DIR}/settings/Conan.cmake)
 run_conan()
 include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
@@ -100,22 +102,22 @@ include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 include(cmake/settings/StandardProjectSettings.cmake)
 
 # enable cache system
-include(${CMAKE_CONFIG_FOLDER}/settings/Cache.cmake)
+include(${_cmake_DIR}/settings/Cache.cmake)
 
 # standard compiler warnings
-include(${CMAKE_CONFIG_FOLDER}/settings/CompilerWarnings.cmake)
+include(${_cmake_DIR}/settings/CompilerWarnings.cmake)
 set_project_warnings(project_warnings)
 
 # sanitizer options if supported by compiler
-include(${CMAKE_CONFIG_FOLDER}/settings/Sanitizers.cmake)
+include(${_cmake_DIR}/settings/Sanitizers.cmake)
 enable_sanitizers(project_options)
 
 # enable doxygen
-include(${CMAKE_CONFIG_FOLDER}/settings/Doxygen.cmake)
+include(${_cmake_DIR}/settings/Doxygen.cmake)
 enable_doxygen(ENABLE_BUILD_DOCS)
 
 # allow for static analysis options
-include(${CMAKE_CONFIG_FOLDER}/settings/StaticAnalyzers.cmake)
+include(${_cmake_DIR}/settings/StaticAnalyzers.cmake)
 
 if (ENABLE_PCH)
     target_precompile_headers(project_options
@@ -130,8 +132,8 @@ else ()
 endif ()
 find_package(pybind11 REQUIRED)
 
-include(${CMAKE_CONFIG_FOLDER}/targets/per.cmake)
-include(${CMAKE_CONFIG_FOLDER}/targets/pyper.cmake)
+include(${_cmake_DIR}/targets/per.cmake)
+include(${_cmake_DIR}/targets/pyper.cmake)
 
 if (SKBUILD)
     message("Building with scikit-build. Disabling Test target.")
@@ -145,18 +147,42 @@ else ()
         message(
                 "Configuring Tests."
         )
-        include(${CMAKE_CONFIG_FOLDER}/targets/tests.cmake)
+        include(${_cmake_DIR}/targets/tests.cmake)
     endif ()
 
 
     include(CMakePackageConfigHelpers)
     include(GNUInstallDirs)
 
+    #
+    # Install pkg-config file
+    #
+
+    set(PER_PKGCONFIG ${CMAKE_CURRENT_BINARY_DIR}/per.pc)
+
+    configure_file(
+            ${_cmake_DIR}/in/per.pc.in
+            ${PER_PKGCONFIG}
+            @ONLY
+    )
+
+    install(
+            FILES ${PER_PKGCONFIG}
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+    )
+
     write_basic_package_version_file(
             "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}ConfigVersion.cmake"
             VERSION ${PROJECT_VERSION}
             COMPATIBILITY AnyNewerVersion
     )
+
+    configure_package_config_file(
+            "${_cmake_DIR}/in/${PROJECT_NAME_LOWERCASE}Config.cmake.in"
+            "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}Config.cmake"
+            INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME_LOWERCASE}/cmake/
+    )
+
     # CMake requires all interface dependencies of our library targets, including options and warnings, to be exported.
     install(
             TARGETS project_options
@@ -190,11 +216,6 @@ else ()
             DEPENDS ${per_pymodule}
     )
 
-    configure_package_config_file(
-            "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME_LOWERCASE}Config.cmake.in"
-            "${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}Config.cmake"
-            INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME_LOWERCASE}/cmake/
-    )
 
     install(
             EXPORT ${PROJECT_NAME_LOWERCASE}Options
@@ -222,5 +243,7 @@ else ()
     # we install that sub-directory instead of PROJECT_PER_INCLUDE_DIR, in order to avoid an
     # include/include/proj_name situation and get the correct include/proj_name.
     install(DIRECTORY ${PROJECT_PER_INCLUDE_DIR}/${PROJECT_NAME_LOWERCASE} DESTINATION include)
+
+    export(PACKAGE per)
 
 endif ()

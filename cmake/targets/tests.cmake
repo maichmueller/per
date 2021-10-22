@@ -8,9 +8,9 @@ list(TRANSFORM TEST_SOURCES PREPEND "${PROJECT_TEST_DIR}/")
 
 add_executable(${per_test} ${TEST_SOURCES})
 
-set_target_properties(${per_test} PROPERTIES
-        EXCLUDE_FROM_ALL True  # don't build tests when ALL is asked to be built. Only on demand.
-        )
+#set_target_properties(${per_test} PROPERTIES
+#        EXCLUDE_FROM_ALL True  # don't build tests when ALL is asked to be built. Only on demand.
+#        )
 
 target_link_libraries(${per_test}
         PRIVATE

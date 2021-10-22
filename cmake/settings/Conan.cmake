@@ -13,7 +13,7 @@ include(${CMAKE_BINARY_DIR}/conan.cmake)
 find_program(CONAN conan PATHS ${CONAN_PATH})
 
 conan_cmake_run(
-  CONANFILE deps/conanfile.txt
+  CONANFILE ${DEPENDENCY_DIR}/${CONANFILE}
   CONAN_COMMAND ${CONAN}
   ${CONAN_EXTRA_REQUIRES}
   OPTIONS

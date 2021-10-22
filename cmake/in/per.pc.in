@@ -5,3 +5,4 @@ Name: PER
 Description: A Prioritized Experience Replay Buffer
 Url: https://github.com/maichmueller/per
 Version: @PER_VERSION@
+Cflags: -I${includedir}
