@@ -3,7 +3,7 @@ name: CI
 on: [ push, pull_request ]
 
 jobs:
-  matrix:
+  matrix-strategy-setup:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -15,7 +15,7 @@ jobs:
           echo "::set-output name=matrix::$TASKS"
 
   build-test-install:
-    needs: matrix
+    needs: matrix-strategy-setup
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
