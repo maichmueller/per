@@ -15,15 +15,6 @@
 
 #define UNKOWN "unknown"
 
-#if defined( __STDC__ ) && !defined( __cplusplus )
-#   error "This project requires a C++ compiler !"
-#endif
-#if defined( __cplusplus ) && ( __cplusplus == 199711L )
-#   error "This project requires a C++11 compliant compiler in order to build properly!\
-             If your compiler support C++11, please turn C++11 support option on !"
-#endif
-
-
 #if defined( __GNUC__ ) || defined( __MINGW__ ) || defined ( __clang__ )
 #   define FUNCTION __PRETTY_FUNCTION__
 #	define restrict __restrict__
