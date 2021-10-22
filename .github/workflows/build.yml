@@ -125,6 +125,11 @@ jobs:
         run: |
           cmake --install ./build --prefix=$GITHUB_WORKSPACE/installation_test_dir
 
+      - name: Show installed files
+        shell: bash
+        run: |
+          ls $GITHUB_WORKSPACE/installation_test_dir
+
       - name: Configure CMake for Test Project
         # Use a bash shell so we can use the same syntax for environment variable
         # access regardless of the host operating system
