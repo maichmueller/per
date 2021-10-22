@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
-project(PER_INSTALL LANGUAGE CXX)
+
+project(PER_INSTALL LANGUAGES CXX)
 
 find_package(per REQUIRED
         PATHS ${per_path}
