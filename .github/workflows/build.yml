@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: ${{ fromJson(needs.matrix.outputs.matrix) }}
+        config: ${{ fromJson(needs.matrix-strategy-setup.outputs.matrix) }}
 
     steps:
       - uses: actions/checkout@v2
