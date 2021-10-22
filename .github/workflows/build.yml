@@ -123,7 +123,7 @@ jobs:
 
       - name: Install
         run: |
-          cmake --install ./build --prefix=$GITHUB_WORKSPACE/installation_test_dir
+          cmake --install ./build --prefix=${{ runner.workspace }}/installation_test_dir
 
       - name: Show installed files
         shell: bash
