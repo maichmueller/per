@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 #include "per/per.hpp"
 
-TEST(PrioritizedExperience, reproduciblity)
+TEST(PrioritizedExperience, reproducibility)
 {
    // enable usage of py::object subtypes
    py::scoped_interpreter guard{};

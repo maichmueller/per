@@ -128,7 +128,6 @@ jobs:
       - name: Show installed files
         shell: bash
         run: |
-          ls ${{ runner.workspace }}
           ls ${{ runner.workspace }}/installation_test_dir
 
       - name: Configure CMake for Test Project
