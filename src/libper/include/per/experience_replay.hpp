@@ -10,7 +10,7 @@
 #include "per/sum_tree.hpp"
 #include "per/macro.hpp"
 
-class PER_EXPORT PrioritizedExperience {
+class PER_API PrioritizedExperience {
   public:
    using SumTreeType = SumTree< std::pair< py::object, double > >;
    using value_type = typename SumTreeType::value_type;
