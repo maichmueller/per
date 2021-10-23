@@ -1,0 +1,75 @@
+name: Python CI
+
+on: [ push, pull_request ]
+
+jobs:
+  matrix-strategy-setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: |
+          TASKS=$(echo $(cat .github/workflows/build-matrix.json) | sed 's/ //g' )
+          echo "::set-output name=matrix::$TASKS"
+
+  build-test-install:
+    needs: matrix-strategy-setup
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJson(needs.matrix-strategy-setup.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install conan
+        shell: bash
+        run: |
+          python3 -m pip install --upgrade pip setuptools
+          python3 -m pip install conan
+
+      - name: Install tox
+        shell: bash
+        run: |
+          python3 -m pip install tox
+
+      - name: Source profile
+        if: runner.os == 'Linux'
+        shell: bash
+        run: source ~/.profile
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.9
+        with:
+          cmake-version: '3.21'
+
+      - name: Configure Windows compile environment
+        uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows' && matrix.config.cxx == 'cl'
+        with:
+          arch: amd64
+
+      - name: Install The Python PKG
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: bash
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+        run: |
+          python3 -m pip install .
+
+      - name: Run Tests
+        shell: bash
+        run: |
+          tox

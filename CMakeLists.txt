@@ -139,9 +139,11 @@ include(${_cmake_DIR}/targets/per.cmake)
 include(${_cmake_DIR}/targets/pyper.cmake)
 
 if (SKBUILD)
-    message("Building with scikit-build. Disabling Test target.")
+    message("Building with scikit-build. Configuring only for python build.")
     # install locally so that sciki-build can correctly install it
-    install(TARGETS ${per_pymodule} LIBRARY DESTINATION .)
+    # The destination is relative to the path given to skbuild in
+    # the cmake_install_dir parameter within setup in setup.py
+    install(TARGETS ${per_pymodule} LIBRARY DESTINATION pyper)
 
 else ()
     if (ENABLE_TESTING)
