@@ -31,8 +31,9 @@ void PrioritizedExperience::push(py::object value)
 {
    auto deleted_entry = m_sumtree.insert(
       value_type{
-         std::move(value),
-         std::pow(m_max_priority / m_sumtree.total() * static_cast< double >(m_capacity), m_beta)},
+         /*value=*/std::move(value),
+         /*weight=*/std::pow(
+            m_max_priority / m_sumtree.total() * static_cast< double >(m_capacity), m_beta)},
       m_max_priority);
 
    if(deleted_entry.has_value()) {

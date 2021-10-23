@@ -10,7 +10,7 @@ void init_sumtree(py::module_& m)
    py::class_< PySumTree > sumtree(m, "SumTree");
    sumtree.def(py::init< size_t >());
 
-   sumtree.def("__len__", &PySumTree::len);
+   sumtree.def("__len__", &PySumTree::size);
 
    sumtree.def("__getitem__", &PySumTree::priority, py::arg("index"));
 
