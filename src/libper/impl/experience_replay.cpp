@@ -1,12 +1,12 @@
 
-#include "per/per.hpp"
-
 #include <utility>
+
+#include "per/per.hpp"
 
 void PrioritizedExperience::_recompute_max_weight(std::optional< double > triggering_weight)
 {
    if(not triggering_weight.has_value()
-      || std::abs(triggering_weight.value() - m_max_weight) >= 1e-16) {
+      or std::abs(triggering_weight.value() - m_max_weight) >= 1e-16) {
       return;
    }
    m_max_weight = std::max_element(
@@ -21,7 +21,7 @@ void PrioritizedExperience::_recompute_max_weight(std::optional< double > trigge
 void PrioritizedExperience::_recompute_max_priority(std::optional< double > triggering_prio)
 {
    if(not triggering_prio.has_value()
-      || std::abs(triggering_prio.value() - m_max_priority) >= 1e-16) {
+      or std::abs(triggering_prio.value() - m_max_priority) >= 1e-16) {
       return;
    }
    m_max_weight = *std::max_element(m_sumtree.priority_begin(), m_sumtree.priority_end());
@@ -31,7 +31,8 @@ void PrioritizedExperience::push(py::object value)
 {
    auto deleted_entry = m_sumtree.insert(
       value_type{
-         std::move(value), std::pow(m_max_priority / m_sumtree.total() * static_cast<double>(m_capacity), m_beta)},
+         std::move(value),
+         std::pow(m_max_priority / m_sumtree.total() * static_cast< double >(m_capacity), m_beta)},
       m_max_priority);
 
    if(deleted_entry.has_value()) {
@@ -72,8 +73,8 @@ PrioritizedExperience::sample(size_t n)
    WeightVec weights;
    IndexVec indices;
 
-   // backup container for the priorities of already sampled elements (sample without
-   // replacement)
+   // backup container for the priorities of already sampled elements
+   // (sample without replacement)
    std::vector< double > priorities;
 
    auto n_samples = std::min(n, m_sumtree.size());

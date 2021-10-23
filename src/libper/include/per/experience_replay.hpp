@@ -7,9 +7,22 @@
 #include <random>
 #include <vector>
 
-#include "per/sum_tree.hpp"
 #include "per/macro.hpp"
+#include "per/sum_tree.hpp"
 
+/**
+ * Prioritized Experience Algorithm Buffer as defined in \cite{per}.
+ *
+ * This class uses a Sum Tree structure to store data with an associated priority and allows to
+ * sample the data according to the distribution:
+ *
+ *      \f$ \mathbb{P}(i) = \frac{\text{prio}_i^\alpha}{\sum_k \text{prio}_k^\alpha} \f$
+ *
+ * The parameter \f$\alpha\f$ controls the degree of uniformity within the distribution and can be
+ * set in the class's constructor. It can be changed later on as well at a computational cost. If
+ * more data than the buffer's capacity is emplaced, the buffer will overwrite the oldest entries
+ * with the new data points.
+ */
 class PER_API PrioritizedExperience {
   public:
    using SumTreeType = SumTree< std::pair< py::object, double > >;
@@ -18,6 +31,14 @@ class PER_API PrioritizedExperience {
    using WeightVec = std::vector< double >;
    using IndexVec = std::vector< size_t >;
 
+   /**
+    * The constructor of a PER buffer.
+    *
+    * @param capacity the maximum numbers of samples to be held at any point in time.
+    * @param alpha
+    * @param beta
+    * @param seed
+    */
    PrioritizedExperience(
       size_t capacity,
       double alpha = 1.,

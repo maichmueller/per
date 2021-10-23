@@ -21,13 +21,13 @@ TEST(SumTree, All)
    expected[1000] = {581, py::int_(1581), 3162.};
 
    for(auto [n, results] : expected) {
-      SumTree<py::object> tree(n);
+      SumTree< py::object > tree(n);
       for(int i = 0; i < 2 * n; i++) {
          tree.insert(py::int_(i), 2 * i);
       }
       auto return_value = tree.get(0.5);
       ASSERT_EQ(std::get< 0 >(return_value), std::get< 0 >(results));
-      ASSERT_EQ(std::get< 1 >(return_value).cast<int>(), std::get< 1 >(results).cast<int>());
+      ASSERT_EQ(std::get< 1 >(return_value).cast< int >(), std::get< 1 >(results).cast< int >());
       ASSERT_NEAR(std::get< 2 >(return_value), std::get< 2 >(results), 1e-16);
    }
 }

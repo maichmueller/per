@@ -17,7 +17,7 @@ pyproject.toml
 setup.py
 src/CMakeLists.txt
 src/pyper/__init__.py
-src/pyper/binding/init_per.cpp
+src/pyper/binding/init_experience_replay.cpp
 src/pyper/binding/init_sumtree.cpp
 src/pyper/binding/module.cpp
 src/pyper/impl/per.cpp

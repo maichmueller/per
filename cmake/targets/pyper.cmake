@@ -1,7 +1,7 @@
 set(PYTHON_MODULE_SOURCES
         module.cpp
         init_sumtree.cpp
-        init_per.cpp
+        init_experience_replay.cpp
         )
 list(TRANSFORM PYTHON_MODULE_SOURCES PREPEND "${PROJECT_PER_BINDING_DIR}/")
 

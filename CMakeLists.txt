@@ -101,6 +101,9 @@ include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 # set the standard project settings
 include(cmake/settings/StandardProjectSettings.cmake)
 
+# load extra clang dev tools
+include(cmake/settings/clang-cxx-dev-tools.cmake)
+
 # enable cache system
 include(${_cmake_DIR}/settings/Cache.cmake)
 

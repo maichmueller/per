@@ -4,7 +4,8 @@
 
 namespace py = pybind11;
 
-void init_per(py::module_ &m) {
+void init_experience_replay(py::module_& m)
+{
    py::class_< PrioritizedExperience > pe(m, "PrioritizedExperience");
 
    pe.def(

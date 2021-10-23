@@ -24,7 +24,9 @@ TEST(PrioritizedExperience, reproducibility)
    };
 
    auto [per1, per2, per3] = std::tuple{
-      PrioritizedExperience(10, 1., 1., 0), PrioritizedExperience(10, 1., 1., 0), PrioritizedExperience(10, 1., 1., 1)};
+      PrioritizedExperience(10, 1., 1., 0),
+      PrioritizedExperience(10, 1., 1., 0),
+      PrioritizedExperience(10, 1., 1., 1)};
 
    for(auto& v : values) {
       per1.push(v);

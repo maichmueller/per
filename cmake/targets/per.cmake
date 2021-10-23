@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(LIBRARY_SOURCES
-        per.cpp
+        experience_replay.cpp
         )
 list(TRANSFORM LIBRARY_SOURCES PREPEND "${PROJECT_PER_SRC_DIR}/")
 
