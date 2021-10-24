@@ -74,7 +74,7 @@ jobs:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
         run: |
-          sudo pip install . -v
+          pip install . -v
 
       - name: Run Tests
         shell: bash
