@@ -74,11 +74,7 @@ jobs:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
         run: |
-          python3 -m pip install .
-
-      - name: Setup tmate session
-        if: failure()
-        uses: mxschmitt/action-tmate@v3
+          sudo pip install . -v
 
       - name: Run Tests
         shell: bash
