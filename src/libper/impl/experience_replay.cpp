@@ -79,6 +79,10 @@ PrioritizedExperience::sample(size_t n)
    std::vector< double > priorities;
 
    auto n_samples = std::min(n, m_sumtree.size());
+   values.reserve(n_samples);
+   weights.reserve(n_samples);
+   indices.reserve(n_samples);
+   priorities.reserve(n_samples);
 
    std::uniform_real_distribution< double > dist(0, 1);
 

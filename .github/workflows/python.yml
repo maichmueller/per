@@ -59,6 +59,13 @@ jobs:
         with:
           arch: amd64
 
+      - name: conan test
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: bash
+        run: |
+          conan -b
+
       - name: Install The Python PKG
         # Use a bash shell so we can use the same syntax for environment variable
         # access regardless of the host operating system
