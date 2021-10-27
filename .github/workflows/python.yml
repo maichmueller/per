@@ -53,13 +53,19 @@ jobs:
         with:
           arch: amd64
 
-      - name: Install The Python PKG
+      - name: Install pyper
         shell: bash
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
         run: |
           pip install . -v
+
+      - name: Check pkg contents
+        shell: bash
+        run: |
+          pip show pyper -f
+
 
       - name: Run Tests
         shell: bash

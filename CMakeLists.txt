@@ -116,9 +116,9 @@ include(${_cmake_DIR}/settings/Sanitizers.cmake)
 enable_sanitizers(project_options)
 
 # enable doxygen
-if(ENABLE_BUILD_DOCS)
-include(${_cmake_DIR}/settings/Doxygen.cmake)
-endif()
+if (ENABLE_BUILD_DOCS)
+    include(${_cmake_DIR}/settings/Doxygen.cmake)
+endif ()
 
 # allow for static analysis options
 include(${_cmake_DIR}/settings/StaticAnalyzers.cmake)
@@ -145,8 +145,9 @@ if (SKBUILD)
     # The destination is relative to the path given to skbuild in
     # the cmake_install_dir parameter within setup in setup.py
     install(TARGETS ${per_pymodule} LIBRARY DESTINATION pyper)
-    install(TARGETS ${per_lib}_shared LIBRARY DESTINATION pyper)
-
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        install(TARGETS ${per_lib}_shared LIBRARY DESTINATION pyper)
+    endif ()
 else ()
     if (ENABLE_TESTING)
         find_package("GTest")
