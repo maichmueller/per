@@ -27,6 +27,7 @@ setup(
     cmake_install_dir="src",
     cmake_args=[
         "-DCMAKE_BUILD_TYPE:STRING=Release",
+        "-DENABLE_BUILD_DOCS:BOOL=OFF",
         "-DWARNINGS_AS_ERRORS:BOOL=OFF",
         "-DUSE_PYBIND11_FINDPYTHON:BOOL=ON"
     ],
