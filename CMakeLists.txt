@@ -145,6 +145,7 @@ if (SKBUILD)
     # The destination is relative to the path given to skbuild in
     # the cmake_install_dir parameter within setup in setup.py
     install(TARGETS ${per_pymodule} LIBRARY DESTINATION pyper)
+    install(TARGETS ${per_lib}_shared LIBRARY DESTINATION pyper)
 
 else ()
     if (ENABLE_TESTING)
