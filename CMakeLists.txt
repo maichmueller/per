@@ -116,8 +116,9 @@ include(${_cmake_DIR}/settings/Sanitizers.cmake)
 enable_sanitizers(project_options)
 
 # enable doxygen
+if(ENABLE_BUILD_DOCS)
 include(${_cmake_DIR}/settings/Doxygen.cmake)
-enable_doxygen(ENABLE_BUILD_DOCS)
+endif()
 
 # allow for static analysis options
 include(${_cmake_DIR}/settings/StaticAnalyzers.cmake)
