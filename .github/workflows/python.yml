@@ -32,10 +32,10 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install tox
+      - name: Install pytest
         shell: bash
         run: |
-          python3 -m pip install tox
+          python3 -m pip install pytest
 
       - name: Source profile
         if: runner.os == 'Linux'
