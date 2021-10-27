@@ -75,8 +75,8 @@ jobs:
           pip install . -v
 
       - name: Setup tmate session
-          if: ${{ failure() }}
-          uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
 
       - name: Run Tests
         shell: bash
