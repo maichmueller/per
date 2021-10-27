@@ -32,12 +32,6 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install conan
-        shell: bash
-        run: |
-          python3 -m pip install --upgrade pip setuptools
-          python3 -m pip install conan
-
       - name: Install tox
         shell: bash
         run: |
