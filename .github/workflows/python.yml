@@ -65,6 +65,8 @@ jobs:
         shell: bash
         run: |
           pip show pyper -f
+          cd $(python -c "import sysconfig; print(sysconfig.get_path('purelib'))")
+          otool -l ./pyper/libper++_shared.dylib
 
 
       - name: Run Tests
