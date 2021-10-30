@@ -150,17 +150,11 @@ if (SKBUILD)
     # (but later on when installing)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}")
+    set(CMAKE_INSTALL_RPATH ./pyper)
 
     # add the automatically determined parts of the RPATH
     # which point to directories outside the build tree to the install RPATH
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-    # the RPATH to be used when installing, but only if it's not a system directory
-    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-    if("${isSystemDir}" STREQUAL "-1")
-        set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}")
-    endif("${isSystemDir}" STREQUAL "-1")
 
     # install locally so that sciki-build can correctly install it
     # The destination is relative to the path given to skbuild in
