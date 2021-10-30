@@ -57,6 +57,7 @@ jobs:
           pip install . -v
 
       - name: Check pkg contents
+        if: runner.os == 'macOS'
         shell: bash
         run: |
           pip show pyper -f
