@@ -62,7 +62,7 @@ jobs:
         run: |
           pip show pyper -f
           cd $(python -c "import sysconfig; print(sysconfig.get_path('purelib'))")
-          otool -L ./pyper/_pyper.cpython-39-darwin.so
+          otool -l ./pyper/_pyper.cpython-39-darwin.so | grep LC_RPATH -A2
 
 
       - name: Install pytest
