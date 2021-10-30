@@ -155,10 +155,6 @@ if (SKBUILD)
     # add the automatically determined parts of the RPATH
     # which point to directories outside the build tree to the install RPATH
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-    SET_TARGET_PROPERTIES (${per_pymodule}
-            PROPERTIES BUILD_WITH_INSTALL_RPATH 1
-            INSTALL_NAME_DIR "@rpath"
-            )
     # install locally so that sciki-build can correctly install it
     # The destination is relative to the path given to skbuild in
     # the cmake_install_dir parameter within setup in setup.py
