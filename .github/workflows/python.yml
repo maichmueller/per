@@ -62,7 +62,7 @@ jobs:
         run: |
           pip show pyper -f
           cd $(python -c "import sysconfig; print(sysconfig.get_path('purelib'))")
-          install_name_tool -add_rpath "@loader_path" ./pyper/_pyper.cpython-39-darwin.so
+          install_name_tool -add_rpath "$ORIGIN/" ./pyper/_pyper.cpython-39-darwin.so
           otool -l ./pyper/_pyper.cpython-39-darwin.so
 
 
