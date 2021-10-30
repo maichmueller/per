@@ -143,18 +143,7 @@ include(GNUInstallDirs)
 
 if (SKBUILD)
     message("Building with scikit-build. Configuring only for python build.")
-    # use, i.e. don't skip the full RPATH for the build tree
-    set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
-    # when building, don't use the install RPATH already
-    # (but later on when installing)
-    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-
-    set(CMAKE_INSTALL_RPATH ./pyper)
-
-    # add the automatically determined parts of the RPATH
-    # which point to directories outside the build tree to the install RPATH
-    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
     # install locally so that sciki-build can correctly install it
     # The destination is relative to the path given to skbuild in
     # the cmake_install_dir parameter within setup in setup.py

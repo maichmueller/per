@@ -142,13 +142,19 @@ jobs:
 
       - name: Build
         shell: bash
-        run: |
-          cmake --build ./build_install --config Release --target per_install_test
+        run: >
+          cmake
+          --build ./build_install
+          --config Release
+          --target
+          per_install_test_static
+          per_install_test_shared
 
       - name: Run Install Test Executable
         shell: bash
-        run: >
-          ./build_install/bin/per_install_test*
+        run: |
+          ./build_install/bin/per_install_test*static*
+          ./build_install/bin/per_install_test*shared*
 
 
   publish-gtest-results:

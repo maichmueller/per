@@ -17,5 +17,7 @@ find_package(per REQUIRED CONFIG
         PATHS ${per_path}
         )
 
-add_executable(per_install_test main.cpp)
+add_executable(per_install_test_static main.cpp)
 target_link_libraries(per_install_test PRIVATE per::per++_static)
+add_executable(per_install_test_shared main.cpp)
+target_link_libraries(per_install_test PRIVATE per::per++_shared)
