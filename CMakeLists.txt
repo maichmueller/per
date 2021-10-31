@@ -143,7 +143,7 @@ include(GNUInstallDirs)
 
 if (SKBUILD)
     message("Building with scikit-build. Configuring only for python build.")
-
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath='$ORIGIN'")
     # install locally so that sciki-build can correctly install it
     # The destination is relative to the path given to skbuild in
     # the cmake_install_dir parameter within setup in setup.py
