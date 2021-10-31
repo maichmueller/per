@@ -4,29 +4,12 @@ project(PER VERSION 0.1 LANGUAGES CXX)
 
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 
-
-# Use C++17
-set(PROJ_CXX_STD_FEATURE cxx_std_17)
-set(PROJ_CXX_STANDARD C++17)
-
-set(per_lib per++)
-set(per_pymodule pyper)
-set(per_test tests)
-
-set(CONANFILE conanfile.txt)
-set(DEPENDENCY_DIR deps)  # has to be relative to CMAKE_CURRENT_SOURCE_DIR
-set(PROJECT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(PROJECT_TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test")
-set(PROJECT_PER_DIR "${PROJECT_SRC_DIR}/libper")
-set(PROJECT_PYPER_DIR "${PROJECT_SRC_DIR}/pyper")
-set(PROJECT_PER_SRC_DIR "${PROJECT_PER_DIR}/impl")
-set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
-set(PROJECT_PER_BINDING_DIR "${PROJECT_PYPER_DIR}/binding")
-set(_cmake_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
 
 # options
 
-option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
+option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" ON)
 option(ENABLE_BUILD_DOCS "Enable building the docs. Requires doxygen to be installed on the system" OFF)
 option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
 option(ENABLE_CACHE "Enable cache if available" ON)
@@ -42,17 +25,60 @@ option(ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
 option(ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
 option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" OFF)
 option(ENABLE_TESTING "Enable Test Builds" ON)
+option(PER_BUILD_SHARED_LIBS "Build per shared library" ${BUILD_SHARED_LIBS})
 option(USE_PYBIND11_FINDPYTHON "Use pybind11 to search for the python library" OFF)
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
+
+# settings
+
+# Use C++17
+set(PROJ_CXX_STD_FEATURE cxx_std_17)
+set(PROJ_CXX_STANDARD C++17)
+
+set(per-lib-type STATIC)
+set(per-lib-postfix "static")
+if (PER_BUILD_SHARED_LIBS)
+    set(per-lib-type SHARED)
+    set(per-lib-postfix "shared")
+endif()
+set(per_lib per++_${per-lib-postfix})
+set(per_pymodule pyper)
+set(per_test tests)
+
+set(CONANFILE conanfile.txt)
+set(DEPENDENCY_DIR deps)  # has to be relative to CMAKE_CURRENT_SOURCE_DIR
+set(PROJECT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(PROJECT_TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test")
+set(PROJECT_PER_DIR "${PROJECT_SRC_DIR}/libper")
+set(PROJECT_PYPER_DIR "${PROJECT_SRC_DIR}/pyper")
+set(PROJECT_PER_SRC_DIR "${PROJECT_PER_DIR}/impl")
+set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
+set(PROJECT_PER_BINDING_DIR "${PROJECT_PYPER_DIR}/binding")
+set(_cmake_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+if(WIN32)
+set(msvc-rt $<TARGET_PROPERTY:MSVC_RUNTIME_LIBRARY>)
+
+set(msvc-rt-mtd-static $<STREQUAL:${msvc-rt},MultiThreadedDebug>)
+set(msvc-rt-mt-static $<STREQUAL:${msvc-rt},MultiThreaded>)
+
+set(msvc-rt-mtd-dll $<STREQUAL:${msvc-rt},MultiThreadedDebugDLL>)
+set(msvc-rt-mt-dll $<STREQUAL:${msvc-rt},MultiThreadedDLL>)
+endif()
+
 
 message(STATUS "PER project files directory: ${PROJECT_SRC_DIR}")
 message(STATUS "PER src directory: ${PROJECT_PER_SRC_DIR}")
 message(STATUS "PER include directory: ${PROJECT_PER_INCLUDE_DIR}")
 message(STATUS "PER bindings directory: ${PROJECT_PER_BINDING_DIR}")
 
-message("C++ Compiler: ${CMAKE_CXX_COMPILER}")
-message("C++ Compiler Info: ${CMAKE_CXX_COMPILER_ID}, version ${CMAKE_CXX_COMPILER_VERSION}")
-message("CURRENT CMAKE BINARY DIR: ${CMAKE_CURRENT_BINARY_DIR}")
+message(STATUS "PER c++ library name: ${per_lib}")
+message(STATUS "PER python extension name: ${per_pymodule}")
+
+message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
+message(STATUS "C++ Compiler Info: ${CMAKE_CXX_COMPILER_ID}, version ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "CURRENT CMAKE BINARY DIR: ${CMAKE_CURRENT_BINARY_DIR}")
+message(STATUS "settings print end.\n")
 
 # Set this path if the conan install is not in the standard directory
 # This doesn't work due to a conan internal error when conan is not found in the standard directory (/usr/bin on linux)
@@ -139,7 +165,6 @@ find_package(pybind11 REQUIRED)
 include(${_cmake_DIR}/targets/per.cmake)
 include(${_cmake_DIR}/targets/pyper.cmake)
 
-include(GNUInstallDirs)
 
 if (SKBUILD)
     message("Building with scikit-build. Configuring only for python build.")
@@ -158,9 +183,6 @@ else ()
         )
         include(${_cmake_DIR}/targets/tests.cmake)
     endif ()
-
-
-    include(CMakePackageConfigHelpers)
 
     #
     # Install pkg-config file
@@ -201,7 +223,7 @@ else ()
             EXPORT ${PROJECT_NAME_LOWERCASE}Warnings
     )
     install(
-            TARGETS ${per_lib}_interface ${per_lib}_shared ${per_lib}_static
+            TARGETS ${per_lib}
             EXPORT ${PROJECT_NAME_LOWERCASE}Targets
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
             BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
