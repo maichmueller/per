@@ -112,6 +112,18 @@ jobs:
           cmake --build ./build_static --config Release --target ${all_target} tests
           cmake --build ./build_shared --config Release --target ${all_target} tests
 
+      - name: Build
+        shell: bash
+        run: |
+          if [[ ${{ runner.os }} == 'Windows' ]]; then
+            all_target=ALL_BUILD
+          else
+            all_target=all
+          fi
+
+          cmake --build ./build_static --config Release --target ${all_target} tests
+          cmake --build ./build_shared --config Release --target ${all_target} tests
+
       - name: Run Install Tests (static)
         shell: bash
         run: >
