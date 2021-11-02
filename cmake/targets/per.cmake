@@ -39,8 +39,8 @@ set_target_properties(
 target_compile_options(
         ${per_lib}
         PRIVATE
-        $<${msvc-rt-mtd-static}:-MTd>
-        $<${msvc-rt-mt-static}:-MT>
-        $<${msvc-rt-mtd-dll}:-MDd>
-        $<${msvc-rt-mt-dll}:-MD>
+        $<$<AND:$<PLATFORM_ID:WIN32>,${msvc-rt-mtd-static}>:-MTd>
+        $<$<AND:$<PLATFORM_ID:WIN32>,${msvc-rt-mt-static}>:-MT>
+        $<$<AND:$<PLATFORM_ID:WIN32>,${msvc-rt-mtd-dll}>:-MDd>
+        $<$<AND:$<PLATFORM_ID:WIN32>,${msvc-rt-mt-dll}>:-MD>
 )
