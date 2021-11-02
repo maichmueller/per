@@ -28,6 +28,7 @@ setup(
     cmake_args=[
         "-DCMAKE_BUILD_TYPE:STRING=Release",
         "-DENABLE_BUILD_DOCS:BOOL=OFF",
+        "-DPER_BUILD_SHARED_LIBS:BOOL=ON",
         "-DWARNINGS_AS_ERRORS:BOOL=OFF",
         "-DUSE_PYBIND11_FINDPYTHON:BOOL=ON"
     ],
