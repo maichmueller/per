@@ -1,27 +1,19 @@
 [
   {
-    "name": "Windows-Latest_MSVC_shared",
-    "os": "windows-latest",
-    "build_type": "Release",
-    "cc": "cl",
-    "cxx": "cl",
-    "static": "FALSE"
-  },
-  {
     "name": "Windows-Latest_MSVC_static",
     "os": "windows-latest",
     "build_type": "Release",
     "cc": "cl",
     "cxx": "cl",
-    "static": "TRUE"
+    "shared": "FALSE"
   },
   {
-    "name": "Ubuntu-20.04_GCC-10_shared",
-    "os": "ubuntu-20.04",
+    "name": "Windows-Latest_MSVC_shared",
+    "os": "windows-latest",
     "build_type": "Release",
-    "cc": "gcc-10",
-    "cxx": "g++-10",
-    "static": "FALSE"
+    "cc": "cl",
+    "cxx": "cl",
+    "shared": "TRUE"
   },
   {
     "name": "Ubuntu-20.04_GCC-10_static",
@@ -29,15 +21,15 @@
     "build_type": "Release",
     "cc": "gcc-10",
     "cxx": "g++-10",
-    "static": "TRUE"
+    "shared": "FALSE"
   },
   {
-    "name": "Ubuntu-20.04_GCC-9_shared",
+    "name": "Ubuntu-20.04_GCC-10_shared",
     "os": "ubuntu-20.04",
     "build_type": "Release",
-    "cc": "gcc-9",
-    "cxx": "g++-9",
-    "static": "FALSE"
+    "cc": "gcc-10",
+    "cxx": "g++-10",
+    "shared": "TRUE"
   },
   {
     "name": "Ubuntu-20.04_GCC-9_static",
@@ -45,15 +37,15 @@
     "build_type": "Release",
     "cc": "gcc-9",
     "cxx": "g++-9",
-    "static": "TRUE"
+    "shared": "FALSE"
   },
   {
-    "name": "Ubuntu-18.04_GCC-9_shared",
-    "os": "ubuntu-18.04",
+    "name": "Ubuntu-20.04_GCC-9_shared",
+    "os": "ubuntu-20.04",
     "build_type": "Release",
     "cc": "gcc-9",
     "cxx": "g++-9",
-    "static": "FALSE"
+    "shared": "TRUE"
   },
   {
     "name": "Ubuntu-18.04_GCC-9_static",
@@ -61,15 +53,15 @@
     "build_type": "Release",
     "cc": "gcc-9",
     "cxx": "g++-9",
-    "static": "TRUE"
+    "shared": "FALSE"
   },
   {
-    "name": "Ubuntu-18.04_GCC-10_shared",
+    "name": "Ubuntu-18.04_GCC-9_shared",
     "os": "ubuntu-18.04",
     "build_type": "Release",
-    "cc": "gcc-10",
-    "cxx": "g++-10",
-    "static": "FALSE"
+    "cc": "gcc-9",
+    "cxx": "g++-9",
+    "shared": "TRUE"
   },
   {
     "name": "Ubuntu-18.04_GCC-10_static",
@@ -77,15 +69,15 @@
     "build_type": "Release",
     "cc": "gcc-10",
     "cxx": "g++-10",
-    "static": "TRUE"
+    "shared": "FALSE"
   },
   {
-    "name": "macOS-Latest_Clang_shared",
-    "os": "macos-latest",
+    "name": "Ubuntu-18.04_GCC-10_shared",
+    "os": "ubuntu-18.04",
     "build_type": "Release",
-    "cc": "clang",
-    "cxx": "clang++",
-    "static": "FALSE"
+    "cc": "gcc-10",
+    "cxx": "g++-10",
+    "shared": "TRUE"
   },
   {
     "name": "macOS-Latest_Clang_static",
@@ -93,6 +85,14 @@
     "build_type": "Release",
     "cc": "clang",
     "cxx": "clang++",
-    "static": "TRUE"
+    "shared": "FALSE"
+  },
+  {
+    "name": "macOS-Latest_Clang_shared",
+    "os": "macos-latest",
+    "build_type": "Release",
+    "cc": "clang",
+    "cxx": "clang++",
+    "shared": "TRUE"
   }
 ]

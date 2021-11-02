@@ -83,7 +83,7 @@ jobs:
           -B ./build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DWARNINGS_AS_ERRORS:BOOL=OFF
-          -DBUILD_SHARED_LIBS:BOOL=${{ matrix.config.static }}
+          -DPER_BUILD_SHARED_LIBS:BOOL=${{ matrix.config.static }}
           -DUSE_PYBIND11_FINDPYTHON:BOOL=ON
 
       - name: Build
@@ -103,7 +103,7 @@ jobs:
           ls ./build
           ls ./build/bin
           ls ./build/lib
-          
+
       - name: Run Tests
         shell: bash
         run: >
