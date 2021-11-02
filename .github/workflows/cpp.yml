@@ -139,7 +139,7 @@ jobs:
         run: >
           cmake
           -S ./test/install
-          -B ./build_install_shared
+          -B ./build_install
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -Dper_path=$GITHUB_WORKSPACE/installation_test_dir
 
