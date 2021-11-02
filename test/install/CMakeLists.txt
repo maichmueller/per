@@ -19,7 +19,9 @@ find_package(per REQUIRED CONFIG
 
 add_executable(per_install_test main.cpp)
 if (TARGET per::per++_static)
+    message("hi")
     target_link_libraries(per_install_test PRIVATE per::per++_static)
 elseif (TARGET per::per++_shared)
+    message("ni")
     target_link_libraries(per_install_test PRIVATE per::per++_shared)
 endif ()

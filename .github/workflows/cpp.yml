@@ -97,6 +97,13 @@ jobs:
 
           cmake --build ./build --config Release --target ${all_target} tests
 
+      - name: Show build files
+        shell: bash
+        run: |
+          ls ./build
+          ls ./build/bin
+          ls ./build/lib
+          
       - name: Run Tests
         shell: bash
         run: >
