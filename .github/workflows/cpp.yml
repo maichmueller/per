@@ -97,18 +97,7 @@ jobs:
 
           cmake --build ./build --config Release --target ${all_target} tests
 
-      - name: Build
-        shell: bash
-        run: |
-          if [[ ${{ runner.os }} == 'Windows' ]]; then
-            all_target=ALL_BUILD
-          else
-            all_target=all
-          fi
-
-          cmake --build ./build --config Release --target ${all_target} tests
-
-      - name: Run Install Tests
+      - name: Run Tests
         shell: bash
         run: >
           GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}-${{ matrix.config.static }}.xml
@@ -123,7 +112,7 @@ jobs:
         if: success()
         with:
           name: gtest-results
-          path: ./build_shared/**/gtest-report-${{ matrix.config.name }}.xml
+          path: ./build/**/gtest-report-${{ matrix.config.name }}.xml
           retention-days: 1
 
       - name: Install
