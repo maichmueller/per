@@ -119,7 +119,7 @@ jobs:
         if: success()
         with:
           name: gtest-results
-          path: ./build/**/gtest-report-${{ matrix.config.name }}.xml
+          path: ./**/gtest-report-${{ matrix.config.name }}.xml
           retention-days: 1
 
       - name: Install
