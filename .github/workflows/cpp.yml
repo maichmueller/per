@@ -83,7 +83,7 @@ jobs:
           -B ./build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DWARNINGS_AS_ERRORS:BOOL=OFF
-          -DPER_BUILD_SHARED_LIBS:BOOL=${{ matrix.config.static }}
+          -DPER_BUILD_SHARED_LIBS:BOOL=${{ matrix.config.shared }}
           -DUSE_PYBIND11_FINDPYTHON:BOOL=ON
 
       - name: Build
@@ -107,7 +107,7 @@ jobs:
       - name: Run Tests
         shell: bash
         run: >
-          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}-${{ matrix.config.static }}.xml
+          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}-${{ matrix.config.shared }}.xml
           GTEST_COLOR=1
           ctest
           --test-dir ./build
@@ -119,7 +119,7 @@ jobs:
         if: success()
         with:
           name: gtest-results
-          path: ./build/gtest-report-${{ matrix.config.name }}-${{ matrix.config.static }}.xml
+          path: ./build/gtest-report-${{ matrix.config.name }}-${{ matrix.config.shared }}.xml
           retention-days: 1
 
       - name: Install
