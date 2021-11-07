@@ -16,7 +16,7 @@ jobs:
 
   build-test-install:
     needs: matrix-strategy-setup
-    name: ${{ matrix.config.name }} '(shared=${{ matrix.config.shared }}')'
+    name: ${{ matrix.config.name }} (shared=${{ matrix.config.shared }})
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false

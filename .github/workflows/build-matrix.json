@@ -1,6 +1,6 @@
 [
   {
-    "name": "Windows-Latest_MSVC_static",
+    "name": "Windows-Latest_MSVC",
     "os": "windows-latest",
     "build_type": "Release",
     "cc": "cl",
@@ -8,7 +8,7 @@
     "shared": "FALSE"
   },
   {
-    "name": "Windows-Latest_MSVC_shared",
+    "name": "Windows-Latest_MSVC",
     "os": "windows-latest",
     "build_type": "Release",
     "cc": "cl",
@@ -16,7 +16,7 @@
     "shared": "TRUE"
   },
   {
-    "name": "Ubuntu-20.04_GCC-10_static",
+    "name": "Ubuntu-20.04_GCC-10",
     "os": "ubuntu-20.04",
     "build_type": "Release",
     "cc": "gcc-10",
@@ -24,7 +24,7 @@
     "shared": "FALSE"
   },
   {
-    "name": "Ubuntu-20.04_GCC-10_shared",
+    "name": "Ubuntu-20.04_GCC-10",
     "os": "ubuntu-20.04",
     "build_type": "Release",
     "cc": "gcc-10",
@@ -32,7 +32,7 @@
     "shared": "TRUE"
   },
   {
-    "name": "Ubuntu-20.04_GCC-9_static",
+    "name": "Ubuntu-20.04_GCC-9",
     "os": "ubuntu-20.04",
     "build_type": "Release",
     "cc": "gcc-9",
@@ -40,7 +40,7 @@
     "shared": "FALSE"
   },
   {
-    "name": "Ubuntu-20.04_GCC-9_shared",
+    "name": "Ubuntu-20.04_GCC-9",
     "os": "ubuntu-20.04",
     "build_type": "Release",
     "cc": "gcc-9",
@@ -48,7 +48,7 @@
     "shared": "TRUE"
   },
   {
-    "name": "Ubuntu-18.04_GCC-9_static",
+    "name": "Ubuntu-18.04_GCC-9",
     "os": "ubuntu-18.04",
     "build_type": "Release",
     "cc": "gcc-9",
@@ -56,7 +56,7 @@
     "shared": "FALSE"
   },
   {
-    "name": "Ubuntu-18.04_GCC-9_shared",
+    "name": "Ubuntu-18.04_GCC-9",
     "os": "ubuntu-18.04",
     "build_type": "Release",
     "cc": "gcc-9",
@@ -64,7 +64,7 @@
     "shared": "TRUE"
   },
   {
-    "name": "Ubuntu-18.04_GCC-10_static",
+    "name": "Ubuntu-18.04_GCC-10",
     "os": "ubuntu-18.04",
     "build_type": "Release",
     "cc": "gcc-10",
@@ -72,7 +72,7 @@
     "shared": "FALSE"
   },
   {
-    "name": "Ubuntu-18.04_GCC-10_shared",
+    "name": "Ubuntu-18.04_GCC-10",
     "os": "ubuntu-18.04",
     "build_type": "Release",
     "cc": "gcc-10",
@@ -80,7 +80,7 @@
     "shared": "TRUE"
   },
   {
-    "name": "macOS-Latest_Clang_static",
+    "name": "macOS-Latest_Clang",
     "os": "macos-latest",
     "build_type": "Release",
     "cc": "clang",
@@ -88,7 +88,7 @@
     "shared": "FALSE"
   },
   {
-    "name": "macOS-Latest_Clang_shared",
+    "name": "macOS-Latest_Clang",
     "os": "macos-latest",
     "build_type": "Release",
     "cc": "clang",
