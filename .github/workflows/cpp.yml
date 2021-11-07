@@ -12,12 +12,11 @@ jobs:
       - id: set-matrix
         run: |
           TASKS=$(echo $(cat .github/workflows/build-matrix.json) | sed 's/ //g' )
-          echo $TASKS
           echo "::set-output name=matrix::$TASKS"
 
   build-test-install:
     needs: matrix-strategy-setup
-    name: ${{ matrix.config.name }} (shared=${{ matrix.config.shared }})
+    name: ${{ matrix.config.name }} (${{ matrix.config.libtype }})
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false

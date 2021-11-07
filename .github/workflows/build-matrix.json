@@ -5,7 +5,8 @@
     "build_type": "Release",
     "cc": "cl",
     "cxx": "cl",
-    "shared": "FALSE"
+    "shared": "FALSE",
+    "libtype": "static"
   },
   {
     "name": "Windows-Latest_MSVC",
@@ -13,7 +14,8 @@
     "build_type": "Release",
     "cc": "cl",
     "cxx": "cl",
-    "shared": "TRUE"
+    "shared": "TRUE",
+    "libtype": "dynamic"
   },
   {
     "name": "Ubuntu-20.04_GCC-10",
@@ -21,7 +23,8 @@
     "build_type": "Release",
     "cc": "gcc-10",
     "cxx": "g++-10",
-    "shared": "FALSE"
+    "shared": "FALSE",
+    "libtype": "static"
   },
   {
     "name": "Ubuntu-20.04_GCC-10",
@@ -29,7 +32,8 @@
     "build_type": "Release",
     "cc": "gcc-10",
     "cxx": "g++-10",
-    "shared": "TRUE"
+    "shared": "TRUE",
+    "libtype": "dynamic"
   },
   {
     "name": "Ubuntu-20.04_GCC-9",
@@ -37,7 +41,8 @@
     "build_type": "Release",
     "cc": "gcc-9",
     "cxx": "g++-9",
-    "shared": "FALSE"
+    "shared": "FALSE",
+    "libtype": "dynamic"
   },
   {
     "name": "Ubuntu-20.04_GCC-9",
@@ -45,7 +50,8 @@
     "build_type": "Release",
     "cc": "gcc-9",
     "cxx": "g++-9",
-    "shared": "TRUE"
+    "shared": "TRUE",
+    "libtype": "dynamic"
   },
   {
     "name": "Ubuntu-18.04_GCC-9",
@@ -53,7 +59,8 @@
     "build_type": "Release",
     "cc": "gcc-9",
     "cxx": "g++-9",
-    "shared": "FALSE"
+    "shared": "FALSE",
+    "libtype": "static"
   },
   {
     "name": "Ubuntu-18.04_GCC-9",
@@ -61,7 +68,8 @@
     "build_type": "Release",
     "cc": "gcc-9",
     "cxx": "g++-9",
-    "shared": "TRUE"
+    "shared": "TRUE",
+    "libtype": "dynamic"
   },
   {
     "name": "Ubuntu-18.04_GCC-10",
@@ -69,7 +77,8 @@
     "build_type": "Release",
     "cc": "gcc-10",
     "cxx": "g++-10",
-    "shared": "FALSE"
+    "shared": "FALSE",
+    "libtype": "static"
   },
   {
     "name": "Ubuntu-18.04_GCC-10",
@@ -77,7 +86,8 @@
     "build_type": "Release",
     "cc": "gcc-10",
     "cxx": "g++-10",
-    "shared": "TRUE"
+    "shared": "TRUE",
+    "libtype": "dynamic"
   },
   {
     "name": "macOS-Latest_Clang",
@@ -85,7 +95,8 @@
     "build_type": "Release",
     "cc": "clang",
     "cxx": "clang++",
-    "shared": "FALSE"
+    "shared": "FALSE",
+    "libtype": "static"
   },
   {
     "name": "macOS-Latest_Clang",
@@ -93,6 +104,7 @@
     "build_type": "Release",
     "cc": "clang",
     "cxx": "clang++",
-    "shared": "TRUE"
+    "shared": "TRUE",
+    "libtype": "dynamic"
   }
 ]
