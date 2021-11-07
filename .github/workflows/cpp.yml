@@ -12,7 +12,7 @@ jobs:
       - id: set-matrix
         run: |
           TASKS=$(echo $(cat .github/workflows/build-matrix.json) | sed 's/ //g' )
-          echo TASKS
+          echo $TASKS
           echo "::set-output name=matrix::$TASKS"
 
   build-test-install:
