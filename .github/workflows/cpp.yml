@@ -16,7 +16,7 @@ jobs:
 
   build-test-install:
     needs: matrix-strategy-setup
-    name: ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }} "("$(if [ ${{ matrix.config.shared }} ]; then echo "shared"; else echo "static"; fi)")"
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
