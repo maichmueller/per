@@ -15,7 +15,8 @@ jobs:
       - uses: actions/checkout@v2
       - id: set-matrix
         run: |
-          TASKS=$(python .github/workflows/adapt_mat.py | sed 's/ //g' )
+          python .github/workflows/adapt_mat.py
+          TASKS=$(echo $(cat .github/workflows/build-matrix.json) | sed 's/ //g' )
           echo $TASKS
           echo "::set-output name=matrix::$TASKS"
 

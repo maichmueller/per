@@ -17,13 +17,6 @@ for entry in d:
     entry_copy2['shared'] = False
     entry_copy2['libtype'] = 'dynamic'
     new_data.append(entry_copy2)
-print("[", sep="\n")
-for i, entry in enumerate(new_data):
-    print("{", sep="\n")
-    for k, v in entry.items():
-        print(f'"{k}":"{v}"', sep="\n")
-    if i == (len(new_data) - 1):
-        print("}", sep="\n")
-    else:
-        print("},", sep="\n")
-print("]")
+
+with open(os.path.join(os.getcwd(), '.github', 'workflows', 'build-matrix.json'), 'w') as f:
+    json.dump(new_data, f)
