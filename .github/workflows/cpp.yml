@@ -17,6 +17,7 @@ jobs:
         run: |
           TASKS=$(echo $(cat .github/workflows/build-matrix.json) | sed 's/ //g' )
           TASKS=$(python .github/workflows/adapt_mat.py | sed 's/ //g' )
+          echo $TASKS
           echo "::set-output name=matrix::$TASKS"
 
   build-test-install:
