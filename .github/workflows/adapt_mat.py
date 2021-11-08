@@ -17,13 +17,13 @@ for entry in d:
     entry_copy2['shared'] = False
     entry_copy2['libtype'] = 'dynamic'
     new_data.append(entry_copy2)
-print("[")
+print("[", sep="\n")
 for i, entry in enumerate(new_data):
-    print("{")
+    print("{", sep="\n")
     for k, v in entry.items():
-        print(f'"{k}":"{v}"')
+        print(f'"{k}":"{v}"', sep="\n")
     if i == (len(new_data) - 1):
-        print("}")
+        print("}", sep="\n")
     else:
-        print("},")
+        print("},", sep="\n")
 print("]")
