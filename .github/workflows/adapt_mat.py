@@ -12,8 +12,9 @@ for entry in d:
     entry_copy1 = deepcopy(entry)
     entry_copy1['shared'] = False
     entry_copy1['libtype'] = 'static'
-    pprint(entry_copy1)
+    new_data.append(entry_copy1)
     entry_copy2 = deepcopy(entry_copy1)
     entry_copy2['shared'] = False
     entry_copy2['libtype'] = 'dynamic'
-    pprint(entry_copy2)
+    new_data.append(entry_copy2)
+print(new_data)
