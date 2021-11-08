@@ -17,4 +17,11 @@ for entry in d:
     entry_copy2['shared'] = False
     entry_copy2['libtype'] = 'dynamic'
     new_data.append(entry_copy2)
-print(new_data)
+print("[")
+for entry in new_data:
+    print("{")
+    for k, v in entry.items():
+        print(f'"{k}":"{v}"')
+
+    print("}")
+print("]")
