@@ -74,6 +74,8 @@ message(STATUS "PER bindings directory: ${PROJECT_PER_BINDING_DIR}")
 
 message(STATUS "PER c++ library name: ${per_lib}")
 message(STATUS "PER python extension name: ${per_pymodule}")
+message(STATUS "PER Build shared library: ${PER_BUILD_SHARED_LIBS}")
+message(STATUS "BUILD_SHARED_LIBS: ${BUILD_SHARED_LIBS}")
 
 message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
 message(STATUS "C++ Compiler Info: ${CMAKE_CXX_COMPILER_ID}, version ${CMAKE_CXX_COMPILER_VERSION}")
