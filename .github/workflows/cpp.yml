@@ -162,10 +162,14 @@ jobs:
         run: |
           echo "Build Directory"
           ls ./build_install
-          echo "Build-BIN Directory"
-          ls ./build_install/bin
-          echo "Build-LIB Directory"
-          ls ./build_install/lib
+          if [ -d "./build_install/bin" ]; then
+            echo "Build-BIN Directory"
+            ls ./build_install/bin
+          fi
+          if [ -d "./build_install/lib" ]; then
+            echo "Build-LIB Directory"
+            ls ./build_install/lib
+          fi
 
       - name: Run Install Test Executables
         shell: bash
