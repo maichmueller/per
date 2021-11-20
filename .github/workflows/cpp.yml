@@ -106,8 +106,11 @@ jobs:
       - name: Show build files
         shell: bash
         run: |
+          echo "Build Directory"
           ls ./build
+          echo "Build-BIN Directory"
           ls ./build/bin
+          echo "Build-LIB Directory"
           ls ./build/lib
 
       - name: Run Tests
@@ -153,6 +156,16 @@ jobs:
           --config Release
           --target
           per_install_test
+
+      - name: Show Install Project build files
+        shell: bash
+        run: |
+          echo "Build Directory"
+          ls ./build_install
+          echo "Build-BIN Directory"
+          ls ./build_install/bin
+          echo "Build-LIB Directory"
+          ls ./build_install/lib
 
       - name: Run Install Test Executables
         shell: bash
