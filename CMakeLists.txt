@@ -9,8 +9,9 @@ include(GNUInstallDirs)
 
 # options
 
-option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" ON)
+option(BUILD_SHARED_LIBS "Enable building shared libraries." ON)
 option(ENABLE_BUILD_DOCS "Enable building the docs. Requires doxygen to be installed on the system" OFF)
+option(ENABLE_BUILD_PYTHON_EXTENSION "Enable building the python extension." ON)
 option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
 option(ENABLE_CACHE "Enable cache if available" ON)
 option(ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
@@ -40,7 +41,7 @@ set(per-lib-postfix "static")
 if (PER_BUILD_SHARED_LIBS)
     set(per-lib-type SHARED)
     set(per-lib-postfix "shared")
-endif()
+endif ()
 set(per_lib per++_${per-lib-postfix})
 set(per_pymodule pyper)
 set(per_test tests)
@@ -56,15 +57,15 @@ set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
 set(PROJECT_PER_BINDING_DIR "${PROJECT_PYPER_DIR}/binding")
 set(_cmake_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-if(WIN32)
-set(msvc-rt $<TARGET_PROPERTY:MSVC_RUNTIME_LIBRARY>)
+if (WIN32)
+    set(msvc-rt $<TARGET_PROPERTY:MSVC_RUNTIME_LIBRARY>)
 
-set(msvc-rt-mtd-static $<STREQUAL:${msvc-rt},MultiThreadedDebug>)
-set(msvc-rt-mt-static $<STREQUAL:${msvc-rt},MultiThreaded>)
+    set(msvc-rt-mtd-static $<STREQUAL:${msvc-rt},MultiThreadedDebug>)
+    set(msvc-rt-mt-static $<STREQUAL:${msvc-rt},MultiThreaded>)
 
-set(msvc-rt-mtd-dll $<STREQUAL:${msvc-rt},MultiThreadedDebugDLL>)
-set(msvc-rt-mt-dll $<STREQUAL:${msvc-rt},MultiThreadedDLL>)
-endif()
+    set(msvc-rt-mtd-dll $<STREQUAL:${msvc-rt},MultiThreadedDebugDLL>)
+    set(msvc-rt-mt-dll $<STREQUAL:${msvc-rt},MultiThreadedDLL>)
+endif ()
 
 
 message(STATUS "PER project files directory: ${PROJECT_SRC_DIR}")
@@ -165,8 +166,10 @@ endif ()
 find_package(pybind11 REQUIRED)
 
 include(${_cmake_DIR}/targets/per.cmake)
-include(${_cmake_DIR}/targets/pyper.cmake)
-
+if (ENABLE_BUILD_PYTHON_EXTENSION)
+    message(STATUS "Configuring Python Extesion ${per_pymodule}.")
+    include(${_cmake_DIR}/targets/pyper.cmake)
+endif ()
 
 # use, i.e. don't skip the full RPATH for the build tree
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -183,9 +186,10 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # the RPATH to be used when installing, but only if it's not a system directory
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" isSystemDir)
-if("${isSystemDir}" STREQUAL "-1")
+if ("${isSystemDir}" STREQUAL "-1")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-endif("${isSystemDir}" STREQUAL "-1")
+endif ("${isSystemDir}" STREQUAL "-1")
+
 
 if (SKBUILD)
     message("Building with scikit-build. Configuring only for python build.")
@@ -199,9 +203,7 @@ else ()
     if (ENABLE_TESTING)
         find_package("GTest")
         enable_testing()
-        message(
-                "Configuring Tests."
-        )
+        message(STATUS "Configuring Tests.")
         include(${_cmake_DIR}/targets/tests.cmake)
     endif ()
 
@@ -252,6 +254,8 @@ else ()
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
             PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Development
     )
+
+    if(ENABLE_BUILD_PYTHON_EXTENSION)
     # to use the latest build of the library for a development package install (pip install path/to/project -e),
     # we configure an optional install component of the python extension in-source
     install(
@@ -266,6 +270,7 @@ else ()
             COMMAND ${CMAKE_COMMAND} --install . --component PyExtension_inplace
             DEPENDS ${per_pymodule}
     )
+    endif()
 
 
     install(
