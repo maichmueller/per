@@ -5,6 +5,8 @@
 #include "gtest/gtest.h"
 #include "per/per.hpp"
 
+namespace py = pybind11;
+
 TEST(SumTree, All)
 {
    // enable usage of py::object subtypes

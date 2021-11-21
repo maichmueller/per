@@ -5,6 +5,10 @@
 #include "gtest/gtest.h"
 #include "per/per.hpp"
 
+namespace py = pybind11;
+
+using PyPrioritizedExperience = PrioritizedExperience< py::object >;
+
 TEST(PrioritizedExperience, reproducibility)
 {
    // enable usage of py::object subtypes
@@ -24,9 +28,9 @@ TEST(PrioritizedExperience, reproducibility)
    };
 
    auto [per1, per2, per3] = std::tuple{
-      PrioritizedExperience(10, 1., 1., 0),
-      PrioritizedExperience(10, 1., 1., 0),
-      PrioritizedExperience(10, 1., 1., 1)};
+      PyPrioritizedExperience(10, 1., 1., 0),
+      PyPrioritizedExperience(10, 1., 1., 0),
+      PyPrioritizedExperience(10, 1., 1., 1)};
 
    for(auto& v : values) {
       per1.push(v);
@@ -46,7 +50,7 @@ TEST(PrioritizedExperience, sample)
    // enable usage of py::object subtypes
    py::scoped_interpreter guard{};
 
-   auto per = PrioritizedExperience(10, 1., 1., 0);
+   auto per = PyPrioritizedExperience(10, 1., 1., 0);
    size_t n = 10;
    std::vector< size_t > values;
    std::vector< double > prios(n, 0.);

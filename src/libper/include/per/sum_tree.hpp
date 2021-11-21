@@ -2,15 +2,10 @@
 #ifndef PER_SUM_TREE_HPP
 #define PER_SUM_TREE_HPP
 
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 
 #include <optional>
-
+#include <sstream>
 #include "per/macro.hpp"
-
-namespace py = pybind11;
 
 /**
  * Class providing a sum-tree structure for data of differing priority.
@@ -206,6 +201,7 @@ class SumTree {
 // IMPLEMENTATION
 
 #include <cmath>
+#include <sstream>
 #include <utility>
 
 template < typename ValueType >

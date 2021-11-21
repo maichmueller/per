@@ -9,8 +9,9 @@ include(GNUInstallDirs)
 
 # options
 
-option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" ON)
+option(BUILD_SHARED_LIBS "Enable building shared libraries." ON)
 option(ENABLE_BUILD_DOCS "Enable building the docs. Requires doxygen to be installed on the system" OFF)
+option(ENABLE_BUILD_PYTHON_EXTENSION "Enable building the python extension." ON)
 option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
 option(ENABLE_CACHE "Enable cache if available" ON)
 option(ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
@@ -165,8 +166,10 @@ endif ()
 find_package(pybind11 REQUIRED)
 
 include(${_cmake_DIR}/targets/per.cmake)
-include(${_cmake_DIR}/targets/pyper.cmake)
-
+if (ENABLE_BUILD_PYTHON_EXTENSION)
+    message(STATUS "Configuring Python Extesion ${per_pymodule}.")
+    include(${_cmake_DIR}/targets/pyper.cmake)
+endif ()
 
 # use, i.e. don't skip the full RPATH for the build tree
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -187,6 +190,7 @@ if ("${isSystemDir}" STREQUAL "-1")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 endif ("${isSystemDir}" STREQUAL "-1")
 
+
 if (SKBUILD)
     message("Building with scikit-build. Configuring only for python build.")
         if (APPLE)
@@ -204,9 +208,7 @@ else ()
     if (ENABLE_TESTING)
         find_package("GTest")
         enable_testing()
-        message(
-                "Configuring Tests."
-        )
+        message(STATUS "Configuring Tests.")
         include(${_cmake_DIR}/targets/tests.cmake)
     endif ()
 
@@ -257,6 +259,8 @@ else ()
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
             PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Development
     )
+
+    if(ENABLE_BUILD_PYTHON_EXTENSION)
     # to use the latest build of the library for a development package install (pip install path/to/project -e),
     # we configure an optional install component of the python extension in-source
     install(
@@ -271,6 +275,7 @@ else ()
             COMMAND ${CMAKE_COMMAND} --install . --component PyExtension_inplace
             DEPENDS ${per_pymodule}
     )
+    endif()
 
 
     install(
