@@ -40,7 +40,7 @@ set(per-lib-postfix "static")
 if (PER_BUILD_SHARED_LIBS)
     set(per-lib-type SHARED)
     set(per-lib-postfix "shared")
-endif()
+endif ()
 set(per_lib per++_${per-lib-postfix})
 set(per_pymodule pyper)
 set(per_test tests)
@@ -56,15 +56,15 @@ set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
 set(PROJECT_PER_BINDING_DIR "${PROJECT_PYPER_DIR}/binding")
 set(_cmake_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-if(WIN32)
-set(msvc-rt $<TARGET_PROPERTY:MSVC_RUNTIME_LIBRARY>)
+if (WIN32)
+    set(msvc-rt $<TARGET_PROPERTY:MSVC_RUNTIME_LIBRARY>)
 
-set(msvc-rt-mtd-static $<STREQUAL:${msvc-rt},MultiThreadedDebug>)
-set(msvc-rt-mt-static $<STREQUAL:${msvc-rt},MultiThreaded>)
+    set(msvc-rt-mtd-static $<STREQUAL:${msvc-rt},MultiThreadedDebug>)
+    set(msvc-rt-mt-static $<STREQUAL:${msvc-rt},MultiThreaded>)
 
-set(msvc-rt-mtd-dll $<STREQUAL:${msvc-rt},MultiThreadedDebugDLL>)
-set(msvc-rt-mt-dll $<STREQUAL:${msvc-rt},MultiThreadedDLL>)
-endif()
+    set(msvc-rt-mtd-dll $<STREQUAL:${msvc-rt},MultiThreadedDebugDLL>)
+    set(msvc-rt-mt-dll $<STREQUAL:${msvc-rt},MultiThreadedDLL>)
+endif ()
 
 
 message(STATUS "PER project files directory: ${PROJECT_SRC_DIR}")
@@ -183,13 +183,18 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # the RPATH to be used when installing, but only if it's not a system directory
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" isSystemDir)
-if("${isSystemDir}" STREQUAL "-1")
+if ("${isSystemDir}" STREQUAL "-1")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-endif("${isSystemDir}" STREQUAL "-1")
+endif ("${isSystemDir}" STREQUAL "-1")
 
 if (SKBUILD)
     message("Building with scikit-build. Configuring only for python build.")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath='$ORIGIN'")
+    if (APPLE)
+        set(rpath_orig "'@executable_path'")
+    else ()
+        set(rpath_orig "'$ORIGIN'")
+    endif ()
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath=${rpath_orig}")
     # install locally so that sciki-build can correctly install it
     # The destination is relative to the path given to skbuild in
     # the cmake_install_dir parameter within setup in setup.py
