@@ -189,12 +189,12 @@ endif ("${isSystemDir}" STREQUAL "-1")
 
 if (SKBUILD)
     message("Building with scikit-build. Configuring only for python build.")
-    #    if (APPLE)
-    #        set(rpath_orig "'@executable_path'")
-    #    else ()
-    #        set(rpath_orig "'$ORIGIN'")
-    #    endif ()
-    #    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath=${rpath_orig}")
+        if (APPLE)
+            set(rpath_orig "'@executable_path'")
+        else ()
+            set(rpath_orig "'$ORIGIN'")
+        endif ()
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath='$ORIGIN'")
     # install locally so that sciki-build can correctly install it
     # The destination is relative to the path given to skbuild in
     # the cmake_install_dir parameter within setup in setup.py
