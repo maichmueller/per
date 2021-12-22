@@ -2,11 +2,15 @@
 #ifndef PER_EXPERIENCE_REPLAY_HPP
 #define PER_EXPERIENCE_REPLAY_HPP
 
+
 #include <random>
 #include <vector>
 
 #include "per/macro.hpp"
 #include "per/sum_tree.hpp"
+
+
+namespace per {
 
 /**
  * Prioritized Experience Algorithm Buffer as defined in \cite{per}.
@@ -35,12 +39,12 @@ class PER_API PrioritizedExperience {
   public:
    /// the sum tree is supposed to hold data entries (value_type, double) \f$= (d_i, w_i) \f$ with
    /// \f$ d_i \f$ being the data object and \f$ w_i \f$ being the associated weight
-   using SumTreeType = SumTree< std::pair< ValueType, double > >;
+   using SumTreeType = SumTree< ::std::pair< ValueType, double > >;
    using value_type = ValueType;
    using tree_value_type = typename SumTreeType::value_type;
-   using ValueVec = std::vector< value_type >;
-   using WeightVec = std::vector< double >;
-   using IndexVec = std::vector< size_t >;
+   using ValueVec = ::std::vector< value_type >;
+   using WeightVec = ::std::vector< double >;
+   using IndexVec = ::std::vector< size_t >;
 
    /**
     * The constructor of a PER buffer.
@@ -54,7 +58,7 @@ class PER_API PrioritizedExperience {
       size_t capacity,
       double alpha = 1.,
       double beta = 1.,
-      std::mt19937_64::result_type seed = std::random_device{}());
+      ::std::mt19937_64::result_type seed = ::std::random_device{}());
 
    /**
     * Add a sample to the buffer.
@@ -65,7 +69,7 @@ class PER_API PrioritizedExperience {
     * Add a collection of samples to the buffer.
     * @param values the vector of samples to add.
     */
-   void push(const std::vector< value_type > &values);
+   void push(const ::std::vector< value_type > &values);
    /**
     * Update the given sample indices with new priorties.
     *
@@ -76,7 +80,7 @@ class PER_API PrioritizedExperience {
     * @param priorities the vector of priorities to emplace.
     * The entries of @p indices and @p priorities are paired.
     */
-   void update(const std::vector< size_t > &indices, const std::vector< double > &priorities);
+   void update(const ::std::vector< size_t > &indices, const ::std::vector< double > &priorities);
 
    /**
     * Sample @p n samples from the buffer according to the PER method.
@@ -85,7 +89,7 @@ class PER_API PrioritizedExperience {
     * order). The entries of these return vectors are linked, i.e. for drawn sample \f$ i \f$ the
     * respective value, weight, and index is found in v[i], w[i], ind[i].
     */
-   std::tuple< ValueVec, WeightVec, IndexVec > sample(size_t n);
+   ::std::tuple< ValueVec, WeightVec, IndexVec > sample(size_t n);
 
    /**
     * Setter for \f$ \beta \f$.
@@ -121,7 +125,7 @@ class PER_API PrioritizedExperience {
    /// the temperature parameter for the weights
    double m_beta = 1.;
    /// the random number generator for sampling
-   std::mt19937_64 m_rng;
+   ::std::mt19937_64 m_rng;
    /// the current max priority stored
    double m_max_priority = 1.;
    /// the current max weight stored
@@ -130,19 +134,19 @@ class PER_API PrioritizedExperience {
    /// accordingly. This is computationally faster than a simple array of (samples, priorites).
    SumTreeType m_sumtree;
 
-   void _recompute_max_priority(std::optional< double > triggering_prio = std::nullopt);
-   void _recompute_max_weight(std::optional< double > triggering_weight = std::nullopt);
+   void _recompute_max_priority(::std::optional< double > triggering_prio = ::std::nullopt);
+   void _recompute_max_weight(::std::optional< double > triggering_weight = ::std::nullopt);
 };
 
 template < typename ValueType >
 void PrioritizedExperience< ValueType >::_recompute_max_weight(
-   std::optional< double > triggering_weight)
+   ::std::optional< double > triggering_weight)
 {
    if(not triggering_weight.has_value()
-      or std::abs(triggering_weight.value() - m_max_weight) >= 1e-16) {
+      or ::std::abs(triggering_weight.value() - m_max_weight) >= 1e-16) {
       return;
    }
-   m_max_weight = std::max_element(
+   m_max_weight = ::std::max_element(
                      m_sumtree.value_begin(),
                      m_sumtree.value_end(),
                      [](const tree_value_type &value1, const tree_value_type &value2) {
@@ -153,13 +157,13 @@ void PrioritizedExperience< ValueType >::_recompute_max_weight(
 
 template < typename ValueType >
 void PrioritizedExperience< ValueType >::_recompute_max_priority(
-   std::optional< double > triggering_prio)
+   ::std::optional< double > triggering_prio)
 {
    if(not triggering_prio.has_value()
-      or std::abs(triggering_prio.value() - m_max_priority) >= 1e-16) {
+      or ::std::abs(triggering_prio.value() - m_max_priority) >= 1e-16) {
       return;
    }
-   m_max_weight = *std::max_element(m_sumtree.priority_begin(), m_sumtree.priority_end());
+   m_max_weight = *::std::max_element(m_sumtree.priority_begin(), m_sumtree.priority_end());
 }
 
 template < typename ValueType >
@@ -167,21 +171,21 @@ void PrioritizedExperience< ValueType >::push(PrioritizedExperience::value_type 
 {
    auto deleted_entry = m_sumtree.insert(
       tree_value_type{
-         /*value=*/std::move(value),
-         /*weight=*/std::pow(
+         /*value=*/::std::move(value),
+         /*weight=*/::std::pow(
             m_max_priority / m_sumtree.total() * static_cast< double >(m_capacity), m_beta)},
       m_max_priority);
 
    if(deleted_entry.has_value()) {
       auto &deleted_entry_value = deleted_entry.value();
-      _recompute_max_weight(std::get< 0 >(deleted_entry_value).second);
-      _recompute_max_priority(std::get< 1 >(deleted_entry_value));
+      _recompute_max_weight(::std::get< 0 >(deleted_entry_value).second);
+      _recompute_max_priority(::std::get< 1 >(deleted_entry_value));
    }
 }
 
 template < typename ValueType >
 void PrioritizedExperience< ValueType >::push(
-   const std::vector< PrioritizedExperience::value_type > &values)
+   const ::std::vector< PrioritizedExperience::value_type > &values)
 {
    for(const auto &value : values) {
       push(value);
@@ -190,21 +194,21 @@ void PrioritizedExperience< ValueType >::push(
 
 template < typename ValueType >
 void PrioritizedExperience< ValueType >::update(
-   const std::vector< size_t > &indices,
-   const std::vector< double > &priorities)
+   const ::std::vector< size_t > &indices,
+   const ::std::vector< double > &priorities)
 {
    for(size_t i = 0; i < indices.size(); i++) {
       if(i >= m_capacity) {
-         throw std::out_of_range(
-            "Index '" + std::to_string(i) + "' out of bounds for replay capacity "
-            + std::to_string(m_capacity));
+         throw ::std::out_of_range(
+            "Index '" + ::std::to_string(i) + "' out of bounds for replay capacity "
+            + ::std::to_string(m_capacity));
       }
-      m_sumtree.update(indices[i], std::pow(std::abs(priorities[i]), m_alpha));
+      m_sumtree.update(indices[i], ::std::pow(::std::abs(priorities[i]), m_alpha));
    }
 }
 
 template < typename ValueType >
-std::tuple<
+::std::tuple<
    typename PrioritizedExperience< ValueType >::ValueVec,
    typename PrioritizedExperience< ValueType >::WeightVec,
    typename PrioritizedExperience< ValueType >::IndexVec >
@@ -216,15 +220,15 @@ PrioritizedExperience< ValueType >::sample(size_t n)
 
    // backup container for the priorities of already sampled elements
    // (sample without replacement)
-   std::vector< double > priorities;
+   ::std::vector< double > priorities;
 
-   auto n_samples = std::min(n, m_sumtree.size());
+   auto n_samples = ::std::min(n, m_sumtree.size());
    values.reserve(n_samples);
    weights.reserve(n_samples);
    indices.reserve(n_samples);
    priorities.reserve(n_samples);
 
-   std::uniform_real_distribution< double > dist(0, 1);
+   ::std::uniform_real_distribution< double > dist(0, 1);
 
    for(size_t i = 0; i < n_samples; i++) {
       auto r = dist(m_rng);
@@ -250,7 +254,7 @@ void PrioritizedExperience< ValueType >::alpha(double alpha)
       // we have always stored priority^alpha. So in order to change the exponent to the new
       // alpha we need to exponentiate the stored priority by the fraction of new/old alpha:
       //    (p^(a_1))^(a_2 / a_1) = p^(a_2)
-      m_sumtree.update(i, std::pow(m_sumtree.priority(i), alpha / old_alpha));
+      m_sumtree.update(i, ::std::pow(m_sumtree.priority(i), alpha / old_alpha));
    }
 }
 template < typename ValueType >
@@ -261,7 +265,7 @@ void PrioritizedExperience< ValueType >::beta(double beta)
    for(size_t i = 0; i < m_sumtree.size(); i++) {
       auto &[value, weight] = m_sumtree[i];
       m_sumtree[i] = {
-         value, 1. / (std::pow(weight * m_max_weight, m_beta / old_beta) * m_max_weight)};
+         value, 1. / (::std::pow(weight * m_max_weight, m_beta / old_beta) * m_max_weight)};
    }
 }
 template < typename ValueType >
@@ -269,9 +273,11 @@ PrioritizedExperience< ValueType >::PrioritizedExperience(
    size_t capacity,
    double alpha,
    double beta,
-   std::mt19937_64::result_type seed)
+   ::std::mt19937_64::result_type seed)
     : m_capacity(capacity), m_alpha(alpha), m_beta(beta), m_rng(seed), m_sumtree(capacity)
 {
 }
+
+}  // namespace per
 
 #endif  // PER_EXPERIENCE_REPLAY_HPP

@@ -17,5 +17,8 @@ for entry in d:
     # entry_copy2['libtype'] = 'dynamic'
     # new_data.append(entry_copy2)
 
+# sort by platform-compiler name
+new_data = list(reversed(sorted(new_data, key=lambda x: x["name"])))
+
 with open(os.path.join(os.getcwd(), '.github', 'workflows', 'build-matrix.json'), 'w') as f:
     json.dump(new_data, f)
