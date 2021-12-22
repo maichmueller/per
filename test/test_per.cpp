@@ -7,7 +7,7 @@
 
 namespace py = pybind11;
 
-using PyPrioritizedExperience = PrioritizedExperience< py::object >;
+using PyPrioritizedExperience = per::PrioritizedExperience< py::object >;
 
 TEST(PrioritizedExperience, reproducibility)
 {
