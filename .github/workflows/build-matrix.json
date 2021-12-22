@@ -7,13 +7,6 @@
     "cxx": "cl"
   },
   {
-    "name": "Windows-Latest_MinGW",
-    "os": "windows-latest",
-    "build_type": "Release",
-    "cc": "gcc",
-    "cxx": "g++"
-  },
-  {
     "name": "Ubuntu-20.04_GCC-10",
     "os": "ubuntu-20.04",
     "build_type": "Release",

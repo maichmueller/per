@@ -14,7 +14,7 @@ add_executable(${per_test} ${TEST_SOURCES})
 
 target_link_libraries(${per_test}
         PRIVATE
-        ${per_lib}_static
+        ${per_lib}
         CONAN_PKG::gtest
         )
 

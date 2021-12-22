@@ -1,4 +1,4 @@
-name: CI
+name: C++ CI
 
 on: [ push, pull_request ]
 
@@ -8,15 +8,21 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
       - uses: actions/checkout@v2
       - id: set-matrix
         run: |
+          python .github/workflows/adapt_mat.py
           TASKS=$(echo $(cat .github/workflows/build-matrix.json) | sed 's/ //g' )
+          echo $TASKS
           echo "::set-output name=matrix::$TASKS"
 
   build-test-install:
     needs: matrix-strategy-setup
-    name: ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }} (${{ matrix.config.libtype }})
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
@@ -73,8 +79,6 @@ jobs:
           arch: amd64
 
       - name: Configure CMake
-        # Use a bash shell so we can use the same syntax for environment variable
-        # access regardless of the host operating system
         shell: bash
         env:
           CC: ${{ matrix.config.cc }}
@@ -84,13 +88,9 @@ jobs:
           -S .
           -B ./build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-          -DWARNINGS_AS_ERRORS=OFF
-          -DUSE_PYBIND11_FINDPYTHON=ON
-
-      - name: Show build files
-        shell: bash
-        run: |
-          ls ./build
+          -DWARNINGS_AS_ERRORS:BOOL=OFF
+          -DPER_BUILD_SHARED_LIBS:BOOL=${{ matrix.config.shared }}
+          -DUSE_PYBIND11_FINDPYTHON:BOOL=ON
 
       - name: Build
         shell: bash
@@ -103,10 +103,20 @@ jobs:
 
           cmake --build ./build --config Release --target ${all_target} tests
 
+      - name: Show build files
+        shell: bash
+        run: |
+          echo "Build Directory"
+          ls ./build
+          echo "Build-BIN Directory"
+          ls ./build/bin
+          echo "Build-LIB Directory"
+          ls ./build/lib
+
       - name: Run Tests
         shell: bash
         run: >
-          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}.xml
+          GTEST_OUTPUT=xml:gtest-report-${{ matrix.config.name }}-${{ matrix.config.shared }}.xml
           GTEST_COLOR=1
           ctest
           --test-dir ./build
@@ -118,7 +128,7 @@ jobs:
         if: success()
         with:
           name: gtest-results
-          path: ./build/**/gtest-report-${{ matrix.config.name }}.xml
+          path: ./build/gtest-report-${{ matrix.config.name }}-${{ matrix.config.shared }}.xml
           retention-days: 1
 
       - name: Install
@@ -127,8 +137,6 @@ jobs:
           cmake --install ./build --prefix=$GITHUB_WORKSPACE/installation_test_dir
 
       - name: Configure CMake for Test Project
-        # Use a bash shell so we can use the same syntax for environment variable
-        # access regardless of the host operating system
         shell: bash
         env:
           CC: ${{ matrix.config.cc }}
@@ -140,14 +148,32 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -Dper_path=$GITHUB_WORKSPACE/installation_test_dir
 
-      - name: Build
-        shell: bash
-        run: |
-          cmake --build ./build_install --config Release --target per_install_test
-
-      - name: Run Install Test Executable
+      - name: Build Test Project
         shell: bash
         run: >
+          cmake
+          --build ./build_install
+          --config Release
+          --target
+          per_install_test
+
+      - name: Show Install Project build files
+        shell: bash
+        run: |
+          echo "Build Directory"
+          ls ./build_install
+          if [ -d "./build_install/bin" ]; then
+            echo "Build-BIN Directory"
+            ls ./build_install/bin
+          fi
+          if [ -d "./build_install/lib" ]; then
+            echo "Build-LIB Directory"
+            ls ./build_install/lib
+          fi
+
+      - name: Run Install Test Executables
+        shell: bash
+        run: |
           ./build_install/bin/per_install_test*
 
 

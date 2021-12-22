@@ -24,6 +24,13 @@ setup(
     license="MIT",
     packages=find_packages(where='src'),
     package_dir={"": "src"},
-    cmake_install_dir="src/pyper",
+    cmake_install_dir="src",
+    cmake_args=[
+        "-DCMAKE_BUILD_TYPE:STRING=Release",
+        "-DENABLE_BUILD_DOCS:BOOL=OFF",
+        "-DPER_BUILD_SHARED_LIBS:BOOL=ON",
+        "-DWARNINGS_AS_ERRORS:BOOL=OFF",
+        "-DUSE_PYBIND11_FINDPYTHON:BOOL=ON"
+    ],
     include_package_data=True,
 )
