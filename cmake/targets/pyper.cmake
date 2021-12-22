@@ -17,4 +17,10 @@ set_target_properties(${per_pymodule} PROPERTIES
         LIBRARY_OUTPUT_NAME _${per_pymodule}
         CXX_VISIBILITY_PRESET hidden
         )
-target_link_libraries(${per_pymodule} PUBLIC ${per_lib})
+target_link_libraries(
+        ${per_pymodule}
+        PUBLIC
+        ${per_lib}
+        pybind11::module
+        $<$<NOT:$<BOOL:USE_PYBIND11_FINDPYTHON>>:Python3::Module>
+)

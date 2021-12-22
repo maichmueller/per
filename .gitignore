@@ -9,3 +9,5 @@ _skbuild
 *.so
 
 *.pyd
+
+*.egg
