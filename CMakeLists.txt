@@ -35,8 +35,7 @@ set(PROJ_CXX_STD_FEATURE cxx_std_17)
 set(PROJ_CXX_STANDARD C++17)
 
 set(per-lib-type INTERFACE)
-set(per-lib-postfix "interface")
-set(per_lib per++_${per-lib-postfix})
+set(per_lib per++)
 set(per_pymodule pyper)
 set(per_test tests)
 
