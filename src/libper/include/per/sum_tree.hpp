@@ -2,10 +2,12 @@
 #ifndef PER_SUM_TREE_HPP
 #define PER_SUM_TREE_HPP
 
-
 #include <optional>
 #include <sstream>
+
 #include "per/macro.hpp"
+
+namespace per {
 
 /**
  * Class providing a sum-tree structure for data of differing priority.
@@ -378,5 +380,7 @@ std::vector< double >::const_iterator SumTree< ValueType >::priority_end() const
    return m_prioritree.begin()
           + static_cast< iter_diff_t >(_first_index_at_level(m_leaf_level) + m_size);
 }
+
+}  // namespace per
 
 #endif  // PER_SUM_TREE_HPP
