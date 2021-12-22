@@ -2,13 +2,11 @@
 #ifndef PER_EXPERIENCE_REPLAY_HPP
 #define PER_EXPERIENCE_REPLAY_HPP
 
-
 #include <random>
 #include <vector>
 
 #include "per/macro.hpp"
 #include "per/sum_tree.hpp"
-
 
 namespace per {
 
