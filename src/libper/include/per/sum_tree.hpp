@@ -4,6 +4,8 @@
 
 #include <optional>
 #include <sstream>
+#include <functional>
+#include <algorithm>
 
 #include "per/macro.hpp"
 
