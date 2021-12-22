@@ -27,6 +27,8 @@
  * update rules.
  * The buffer will overwrite the oldest entries to make room for new data points if the capacity is
  * exhausted.
+ *
+ * @tparam ValueType the data value type to store for the prioritized experience algorithm
  */
 template < typename ValueType >
 class PER_API PrioritizedExperience {
@@ -129,7 +131,7 @@ class PER_API PrioritizedExperience {
    SumTreeType m_sumtree;
 
    void _recompute_max_priority(std::optional< double > triggering_prio = std::nullopt);
-   void _recompute_max_weight(std::optional< double > triggering_wegith = std::nullopt);
+   void _recompute_max_weight(std::optional< double > triggering_weight = std::nullopt);
 };
 
 template < typename ValueType >
