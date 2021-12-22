@@ -2,15 +2,14 @@
 #ifndef PER_SUM_TREE_HPP
 #define PER_SUM_TREE_HPP
 
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-
 #include <optional>
+#include <sstream>
+#include <functional>
+#include <algorithm>
 
 #include "per/macro.hpp"
 
-namespace py = pybind11;
+namespace per {
 
 /**
  * Class providing a sum-tree structure for data of differing priority.
@@ -29,7 +28,7 @@ class SumTree {
    // Every sample entered into the buffer is copied (as is done for e.g. std::vector). Within the
    // buffer the sample may be moved (e.g. when updated).
    static_assert(
-      std::is_copy_constructible_v< ValueType > and std::is_move_assignable_v< ValueType >,
+      ::std::is_copy_constructible_v< ValueType > and ::std::is_move_assignable_v< ValueType >,
       "The ValueType of the SumTree must be copy constructible and move assignable.");
 
    using value_type = ValueType;
@@ -61,7 +60,7 @@ class SumTree {
     * @return the optional element that had to be overwritten if the capacity was exceeded.
     * Otherwise returns an empty optinal.
     */
-   std::optional< std::tuple< value_type, double > > insert(value_type value, double priority);
+   ::std::optional< ::std::tuple< value_type, double > > insert(value_type value, double priority);
    /**
     * Update the value at the given index with the provided priority.
     *
@@ -70,7 +69,7 @@ class SumTree {
     * @param priority the priority to update.
     * @param value_opt an optional new value to place at this index.
     */
-   void update(size_t index, double priority, std::optional< value_type > value_opt = std::nullopt);
+   void update(size_t index, double priority, ::std::optional< value_type > value_opt = ::std::nullopt);
    /**
     * Update a collection of values at given indices with the provided priorities.
     *
@@ -80,9 +79,9 @@ class SumTree {
     * @param value optional vector of optional new values to emplace at these indices.
     */
    void update(
-      const std::vector< size_t >& index,
-      const std::vector< double >& priority,
-      const std::optional< std::vector< std::optional< value_type > > >& value = std::nullopt);
+      const ::std::vector< size_t >& index,
+      const ::std::vector< double >& priority,
+      const ::std::optional< ::std::vector< ::std::optional< value_type > > >& value = ::std::nullopt);
 
    /**
     * Get the tuple (element's leaf index, element, priority) pertaining to a given priority.
@@ -97,7 +96,7 @@ class SumTree {
     * priority or absolute.
     * @return a tuple of leaf index, element, element's priority.
     */
-   std::tuple< size_t, value_type, double > get(double priority, bool percentage = true);
+   ::std::tuple< size_t, value_type, double > get(double priority, bool percentage = true);
    double priority(size_t index);
 
    /**
@@ -113,22 +112,22 @@ class SumTree {
     * Getter of the entire value vector.
     * @return a const reference to the values collection.
     */
-   const std::vector< value_type >& values() const { return &m_values; }
+   const ::std::vector< value_type >& values() const { return &m_values; }
    /**
     * Begin iterator for the priorities collection.
     * @return the iterator pointing at the start of the priorities.
     */
-   [[nodiscard]] std::vector< double >::const_iterator priority_begin() const;
+   [[nodiscard]] ::std::vector< double >::const_iterator priority_begin() const;
    /**
     * End iterator for the priorities collection.
     * @return the iterator pointing at the end of the priorities.
     */
-   [[nodiscard]] std::vector< double >::const_iterator priority_end() const;
+   [[nodiscard]] ::std::vector< double >::const_iterator priority_end() const;
    /**
     * Begin iterator for the values collection.
     * @return the iterator pointing at the start of the values.
     */
-   [[nodiscard]] typename std::vector< value_type >::const_iterator value_begin() const
+   [[nodiscard]] typename ::std::vector< value_type >::const_iterator value_begin() const
    {
       return m_values.begin();
    }
@@ -136,7 +135,7 @@ class SumTree {
     * End iterator for the values collection.
     * @return the iterator pointing at the end of the values.
     */
-   [[nodiscard]] typename std::vector< value_type >::const_iterator value_end() const
+   [[nodiscard]] typename ::std::vector< value_type >::const_iterator value_end() const
    {
       return m_values.end();
    }
@@ -144,7 +143,7 @@ class SumTree {
     * Print the priority tree as a string representation.
     * @return the tree as string
     */
-   [[nodiscard]] std::string as_str() const;
+   [[nodiscard]] ::std::string as_str() const;
 
   private:
    /// the maximum number of elements to store at any time.
@@ -156,9 +155,9 @@ class SumTree {
    /// the level at which the leaves are (starts counting from 1)
    size_t m_leaf_level;
    /// the priority tree collection
-   std::vector< double > m_prioritree;
+   ::std::vector< double > m_prioritree;
    /// the value collection
-   std::vector< value_type > m_values;
+   ::std::vector< value_type > m_values;
 
    /**
     * Get the first index pertaining to a given level.
@@ -167,17 +166,17 @@ class SumTree {
     */
    [[nodiscard]] size_t _first_index_at_level(size_t level) const
    {
-      return static_cast< size_t >(std::exp2(level - 1)) - 1;
+      return static_cast< size_t >(::std::exp2(level - 1)) - 1;
    }
    /**
     * Check if the index lies within the bounds of the values collection.
     * @param index the index to check.
-    * @throw std::out_of_range exception if the index is not whithin value collection bounds
+    * @throw ::std::out_of_range exception if the index is not whithin value collection bounds
     */
    inline void _assert_index_in_range(size_t index)
    {
       if(index >= m_size) {
-         throw std::out_of_range("Index '" + std::to_string(index) + "' out of bounds.");
+         throw ::std::out_of_range("Index '" + ::std::to_string(index) + "' out of bounds.");
       }
    }
    /**
@@ -199,48 +198,49 @@ class SumTree {
     */
    template < typename T1, typename T2, typename Allocator1, typename Allocator2 >
    void _assert_length_eq(
-      const std::vector< T1, Allocator1 >& values,
-      const std::vector< T2, Allocator2 >& priorities);
+      const ::std::vector< T1, Allocator1 >& values,
+      const ::std::vector< T2, Allocator2 >& priorities);
 };
 
 // IMPLEMENTATION
 
 #include <cmath>
+#include <sstream>
 #include <utility>
 
 template < typename ValueType >
 template < typename T1, typename T2, typename Allocator1, typename Allocator2 >
 void SumTree< ValueType >::_assert_length_eq(
-   const std::vector< T1, Allocator1 >& values,
-   const std::vector< T2, Allocator2 >& priorities)
+   const ::std::vector< T1, Allocator1 >& values,
+   const ::std::vector< T2, Allocator2 >& priorities)
 {
    if(values.size() != priorities.size()) {
-      throw std::invalid_argument("Value sequence and priority sequence do not match in length.");
+      throw ::std::invalid_argument("Value sequence and priority sequence do not match in length.");
    }
 }
 
 template < typename ValueType >
 SumTree< ValueType >::SumTree(size_t capacity)
     : m_capacity(capacity),
-      m_leaf_level(static_cast< size_t >(std::ceil(std::log2(capacity) + 1))),
-      m_prioritree(static_cast< size_t >(std::exp2(m_leaf_level)) - 1, 0),
+      m_leaf_level(static_cast< size_t >(::std::ceil(::std::log2(capacity) + 1))),
+      m_prioritree(static_cast< size_t >(::std::exp2(m_leaf_level)) - 1, 0),
       m_values(capacity)
 {
 }
 
 template < typename ValueType >
-std::optional< std::tuple< ValueType, double > > SumTree< ValueType >::insert(
+::std::optional< ::std::tuple< ValueType, double > > SumTree< ValueType >::insert(
    ValueType value,
    double priority)
 {
-   std::optional< std::tuple< ValueType, double > > old_pair = std::nullopt;
+   ::std::optional< ::std::tuple< ValueType, double > > old_pair = ::std::nullopt;
    using iter_diff_t = typename decltype(m_prioritree)::difference_type;
    if(m_size == m_capacity) {
       old_pair = {
          m_values[m_leaf_pos], *(priority_begin() + static_cast< iter_diff_t >(m_leaf_pos))};
    }
-   m_size = std::min(m_size + 1, m_capacity);
-   update(m_leaf_pos, priority, std::move(value));
+   m_size = ::std::min(m_size + 1, m_capacity);
+   update(m_leaf_pos, priority, ::std::move(value));
 
    m_leaf_pos = (m_leaf_pos + 1) % m_capacity;
    return old_pair;
@@ -250,11 +250,11 @@ template < typename ValueType >
 void SumTree< ValueType >::update(
    size_t index,
    double priority,
-   std::optional< ValueType > value_opt)
+   ::std::optional< ValueType > value_opt)
 {
    _assert_index_in_range(index);
    if(value_opt.has_value()) {
-      m_values[index] = std::move(value_opt.value());
+      m_values[index] = ::std::move(value_opt.value());
    }
    index += _first_index_at_level(m_leaf_level);
    double delta = priority - m_prioritree[index];
@@ -267,17 +267,17 @@ void SumTree< ValueType >::update(
 
 template < typename ValueType >
 void SumTree< ValueType >::update(
-   const std::vector< size_t >& index,
-   const std::vector< double >& priority,
-   const std::optional< std::vector< std::optional< ValueType > > >& value)
+   const ::std::vector< size_t >& index,
+   const ::std::vector< double >& priority,
+   const ::std::optional< ::std::vector< ::std::optional< ValueType > > >& value)
 {
    _assert_length_eq(index, priority);
-   std::function value_getter = [&](size_t /*index*/) -> std::optional< ValueType > {
-      return std::nullopt;
+   ::std::function value_getter = [&](size_t /*index*/) -> ::std::optional< ValueType > {
+      return ::std::nullopt;
    };
    if(value.has_value()) {
       _assert_length_eq(index, value.value());
-      value_getter = [value_vec = std::move(value.value())](size_t idx) { return value_vec[idx]; };
+      value_getter = [value_vec = ::std::move(value.value())](size_t idx) { return value_vec[idx]; };
    }
    for(size_t i = 0; i < index.size(); i++) {
       _assert_index_in_range(i);
@@ -294,7 +294,7 @@ double SumTree< ValueType >::priority(size_t index)
 
 template < typename ValueType >
 auto SumTree< ValueType >::get(double priority, bool percentage)
-   -> std::tuple< size_t, ValueType, double >
+   -> ::std::tuple< size_t, ValueType, double >
 {
    if(percentage) {
       priority *= m_prioritree[0];
@@ -309,7 +309,7 @@ auto SumTree< ValueType >::get(double priority, bool percentage)
    // 3 4 5 6
    // 7 8 9 10 11 12 13 14
    // To reach the first leaf index 7, one computes 2**(4-1) - 1 = 2**3 -1 = 8 - 1 = 7
-   auto breaking_index = static_cast< size_t >(std::exp2(m_leaf_level - 1) - 1);
+   auto breaking_index = static_cast< size_t >(::std::exp2(m_leaf_level - 1) - 1);
    while(true) {
       size_t left_idx = 2 * index + 1;
       if(priority <= m_prioritree[left_idx]) {
@@ -331,32 +331,32 @@ auto SumTree< ValueType >::get(double priority, bool percentage)
 }
 
 template < typename ValueType >
-std::string SumTree< ValueType >::as_str() const
+::std::string SumTree< ValueType >::as_str() const
 {
-   std::vector< double > prios;
+   ::std::vector< double > prios;
    prios.reserve(m_capacity);
 
    // stores the indices at which to break for the next level segment. Essentially stores the 2-dim
    // info of the prio vector. Each element is the index at which the counter counts up one
    // dimension up, e.g. from [3, 21] to [4,0] if the 3rd element in `shape_vec` is 22
-   std::vector< size_t > shape_vec;
+   ::std::vector< size_t > shape_vec;
 
    size_t level = 1;
-   auto curr_elems = static_cast< size_t >(std::exp2(level - 1));
+   auto curr_elems = static_cast< size_t >(::std::exp2(level - 1));
    for(size_t i = 0; i < m_prioritree.size(); i++) {
       prios.emplace_back(m_prioritree[i]);
       if(i + 1 == curr_elems) {
          shape_vec.emplace_back(prios.size());
          level++;
-         curr_elems = static_cast< size_t >(std::exp2(level - 1));
+         curr_elems = static_cast< size_t >(::std::exp2(level - 1));
       }
    }
 
    auto curr_break = shape_vec.begin();
    size_t idx = 0;
-   std::stringstream ss;
+   ::std::stringstream ss;
    for(auto p : prios) {
-      ss << std::to_string(p);
+      ss << ::std::to_string(p);
       if(idx + 1 == *curr_break) {
          // next element belongs to a new row, so add a break
          ss << "\n";
@@ -369,18 +369,20 @@ std::string SumTree< ValueType >::as_str() const
 }
 
 template < typename ValueType >
-std::vector< double >::const_iterator SumTree< ValueType >::priority_begin() const
+::std::vector< double >::const_iterator SumTree< ValueType >::priority_begin() const
 {
    using iter_diff_t = typename decltype(m_prioritree)::difference_type;
    return m_prioritree.begin() + static_cast< iter_diff_t >(_first_index_at_level(m_leaf_level));
 }
 
 template < typename ValueType >
-std::vector< double >::const_iterator SumTree< ValueType >::priority_end() const
+::std::vector< double >::const_iterator SumTree< ValueType >::priority_end() const
 {
    using iter_diff_t = typename decltype(m_prioritree)::difference_type;
    return m_prioritree.begin()
           + static_cast< iter_diff_t >(_first_index_at_level(m_leaf_level) + m_size);
 }
+
+}  // namespace per
 
 #endif  // PER_SUM_TREE_HPP

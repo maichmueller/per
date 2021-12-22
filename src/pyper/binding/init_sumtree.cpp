@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include "per/sum_tree.hpp"
 
@@ -6,7 +7,7 @@ namespace py = pybind11;
 
 void init_sumtree(py::module_& m)
 {
-   using PySumTree = SumTree< py::object >;
+   using PySumTree = per::SumTree< py::object >;
    py::class_< PySumTree > sumtree(m, "SumTree");
    sumtree.def(py::init< size_t >());
 

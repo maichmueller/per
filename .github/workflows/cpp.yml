@@ -22,7 +22,7 @@ jobs:
 
   build-test-install:
     needs: matrix-strategy-setup
-    name: ${{ matrix.config.name }} (${{ matrix.config.libtype }})
+    name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false

@@ -9,8 +9,8 @@ include(GNUInstallDirs)
 
 # options
 
-option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" ON)
 option(ENABLE_BUILD_DOCS "Enable building the docs. Requires doxygen to be installed on the system" OFF)
+option(ENABLE_BUILD_PYTHON_EXTENSION "Enable building the python extension." ON)
 option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
 option(ENABLE_CACHE "Enable cache if available" ON)
 option(ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
@@ -25,7 +25,6 @@ option(ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
 option(ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
 option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" OFF)
 option(ENABLE_TESTING "Enable Test Builds" ON)
-option(PER_BUILD_SHARED_LIBS "Build per shared library" ${BUILD_SHARED_LIBS})
 option(USE_PYBIND11_FINDPYTHON "Use pybind11 to search for the python library" OFF)
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 
@@ -35,13 +34,8 @@ option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 set(PROJ_CXX_STD_FEATURE cxx_std_17)
 set(PROJ_CXX_STANDARD C++17)
 
-set(per-lib-type STATIC)
-set(per-lib-postfix "static")
-if (PER_BUILD_SHARED_LIBS OR SKBUILD)
-    set(per-lib-type SHARED)
-    set(per-lib-postfix "shared")
-endif ()
-set(per_lib per++_${per-lib-postfix})
+set(per-lib-type INTERFACE)
+set(per_lib per++)
 set(per_pymodule pyper)
 set(per_test tests)
 
@@ -56,17 +50,6 @@ set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
 set(PROJECT_PER_BINDING_DIR "${PROJECT_PYPER_DIR}/binding")
 set(_cmake_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-if (WIN32)
-    set(msvc-rt $<TARGET_PROPERTY:MSVC_RUNTIME_LIBRARY>)
-
-    set(msvc-rt-mtd-static $<STREQUAL:${msvc-rt},MultiThreadedDebug>)
-    set(msvc-rt-mt-static $<STREQUAL:${msvc-rt},MultiThreaded>)
-
-    set(msvc-rt-mtd-dll $<STREQUAL:${msvc-rt},MultiThreadedDebugDLL>)
-    set(msvc-rt-mt-dll $<STREQUAL:${msvc-rt},MultiThreadedDLL>)
-endif ()
-
-
 message(STATUS "PER project files directory: ${PROJECT_SRC_DIR}")
 message(STATUS "PER src directory: ${PROJECT_PER_SRC_DIR}")
 message(STATUS "PER include directory: ${PROJECT_PER_INCLUDE_DIR}")
@@ -74,7 +57,6 @@ message(STATUS "PER bindings directory: ${PROJECT_PER_BINDING_DIR}")
 
 message(STATUS "PER c++ library name: ${per_lib}")
 message(STATUS "PER python extension name: ${per_pymodule}")
-message(STATUS "PER Build shared library: ${PER_BUILD_SHARED_LIBS}")
 message(STATUS "BUILD_SHARED_LIBS: ${BUILD_SHARED_LIBS}")
 
 message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
@@ -165,8 +147,10 @@ endif ()
 find_package(pybind11 REQUIRED)
 
 include(${_cmake_DIR}/targets/per.cmake)
-include(${_cmake_DIR}/targets/pyper.cmake)
-
+if (ENABLE_BUILD_PYTHON_EXTENSION)
+    message(STATUS "Configuring Python Extension ${per_pymodule}.")
+    include(${_cmake_DIR}/targets/pyper.cmake)
+endif ()
 
 # use, i.e. don't skip the full RPATH for the build tree
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -187,6 +171,7 @@ if ("${isSystemDir}" STREQUAL "-1")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 endif ("${isSystemDir}" STREQUAL "-1")
 
+
 if (SKBUILD)
     message("Building with scikit-build. Configuring only for python build.")
         if (APPLE)
@@ -204,9 +189,7 @@ else ()
     if (ENABLE_TESTING)
         find_package("GTest")
         enable_testing()
-        message(
-                "Configuring Tests."
-        )
+        message(STATUS "Configuring Tests.")
         include(${_cmake_DIR}/targets/tests.cmake)
     endif ()
 
@@ -257,6 +240,8 @@ else ()
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
             PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Development
     )
+
+    if(ENABLE_BUILD_PYTHON_EXTENSION)
     # to use the latest build of the library for a development package install (pip install path/to/project -e),
     # we configure an optional install component of the python extension in-source
     install(
@@ -271,6 +256,7 @@ else ()
             COMMAND ${CMAKE_COMMAND} --install . --component PyExtension_inplace
             DEPENDS ${per_pymodule}
     )
+    endif()
 
 
     install(

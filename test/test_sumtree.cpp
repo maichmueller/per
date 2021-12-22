@@ -5,6 +5,8 @@
 #include "gtest/gtest.h"
 #include "per/per.hpp"
 
+namespace py = pybind11;
+
 TEST(SumTree, All)
 {
    // enable usage of py::object subtypes
@@ -21,7 +23,7 @@ TEST(SumTree, All)
    expected[1000] = {581, py::int_(1581), 3162.};
 
    for(auto [n, results] : expected) {
-      SumTree< py::object > tree(n);
+      per::SumTree< py::object > tree(static_cast< size_t >(n));
       for(int i = 0; i < 2 * n; i++) {
          tree.insert(py::int_(i), 2 * i);
       }
