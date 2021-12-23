@@ -9,12 +9,9 @@ def default_trees():
         for i in range(2 * n):
             tree.insert(i, 2 * i)
         return tree
-    trees = {}
-    for n in [10, 20, 30, 50, 100, 200, 500, 1000]:
-        trees[n] = build(n)
+    return {n: build(n) for n in [10, 20, 30, 50, 100, 200, 500, 1000]}
 
 
-@pytest.mark.incremental
 class TestSumTree:
 
     def test_constructor(self):
