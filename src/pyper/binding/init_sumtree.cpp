@@ -9,7 +9,7 @@ void init_sumtree(py::module_& m)
 {
    using PySumTree = per::SumTree< py::object >;
    py::class_< PySumTree > sumtree(m, "SumTree");
-   sumtree.def(py::init< size_t >());
+   sumtree.def(py::init< size_t >(), py::arg("capacity"));
 
    sumtree.def("__len__", &PySumTree::size);
 
@@ -48,5 +48,9 @@ void init_sumtree(py::module_& m)
 
    sumtree.def("value_iter", [](const PySumTree& tree) {
       return py::make_iterator(tree.value_begin(), tree.value_end());
+   });
+
+   sumtree.def("__iter__", [](const PySumTree& tree) {
+      return py::make_iterator(tree.begin(), tree.end());
    });
 }

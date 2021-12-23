@@ -2,12 +2,14 @@
 #ifndef PER_SUM_TREE_HPP
 #define PER_SUM_TREE_HPP
 
+#include <algorithm>
+#include <cppitertools/itertools.hpp>
+#include <functional>
 #include <optional>
 #include <sstream>
-#include <functional>
-#include <algorithm>
 
 #include "per/macro.hpp"
+#include "per/utils.hpp"
 
 namespace per {
 
@@ -69,7 +71,8 @@ class SumTree {
     * @param priority the priority to update.
     * @param value_opt an optional new value to place at this index.
     */
-   void update(size_t index, double priority, ::std::optional< value_type > value_opt = ::std::nullopt);
+   void
+   update(size_t index, double priority, ::std::optional< value_type > value_opt = ::std::nullopt);
    /**
     * Update a collection of values at given indices with the provided priorities.
     *
@@ -81,7 +84,8 @@ class SumTree {
    void update(
       const ::std::vector< size_t >& index,
       const ::std::vector< double >& priority,
-      const ::std::optional< ::std::vector< ::std::optional< value_type > > >& value = ::std::nullopt);
+      const ::std::optional< ::std::vector< ::std::optional< value_type > > >& value =
+         ::std::nullopt);
 
    /**
     * Get the tuple (element's leaf index, element, priority) pertaining to a given priority.
@@ -137,7 +141,30 @@ class SumTree {
     */
    [[nodiscard]] typename ::std::vector< value_type >::const_iterator value_end() const
    {
-      return m_values.end();
+      auto offset = static_cast<
+         typename std::iterator_traits< decltype(m_prioritree.begin()) >::difference_type >(m_size);
+
+      return advance(m_values.begin(), offset);
+   }
+   /**
+    * Joint Begin iterator for the value, priority collection.
+    * @return the iterator pointing to the start of the paired containers.
+    */
+   [[nodiscard]] auto begin() const
+   {
+      return ::iter::zip(
+                ConstView{value_begin(), value_end()}, ConstView{priority_begin(), priority_end()})
+         .begin();
+   }
+   /**
+    * Joint End iterator for the value, priority collection.
+    * @return the iterator pointing to the end of the paired containers.
+    */
+   [[nodiscard]] auto end() const
+   {
+      return ::iter::zip(
+                ConstView{value_begin(), value_end()}, ConstView{priority_begin(), priority_end()})
+         .end();
    }
    /**
     * Print the priority tree as a string representation.
@@ -277,7 +304,9 @@ void SumTree< ValueType >::update(
    };
    if(value.has_value()) {
       _assert_length_eq(index, value.value());
-      value_getter = [value_vec = ::std::move(value.value())](size_t idx) { return value_vec[idx]; };
+      value_getter = [value_vec = ::std::move(value.value())](size_t idx) {
+         return value_vec[idx];
+      };
    }
    for(size_t i = 0; i < index.size(); i++) {
       _assert_index_in_range(i);
@@ -302,8 +331,9 @@ auto SumTree< ValueType >::get(double priority, bool percentage)
    size_t index = 0;
    // the breaking index is the FIRST leaf level index. The tree enumerates elements by starting
    // with 0 at the root, yet the levels starting from 1. This means that, in order to not
-   // overcount, the leaf_level's first index is at 2^(m_max_level - 1) with -1 since starting from
-   // 0. And then one subtracts -1 to reach the first index. An example tree with leaf level 4 is:
+   // overcount, the leaf_level's first index is at 2^(m_max_level - 1) with -1 since starting
+   // from 0. And then one subtracts -1 to reach the first index. An example tree with leaf level
+   // 4 is:
    // 0
    // 1 2
    // 3 4 5 6
@@ -316,9 +346,9 @@ auto SumTree< ValueType >::get(double priority, bool percentage)
          index = left_idx;  // the left child's index
       } else {
          index = left_idx + 1;  // the right child's index
-         // subtract this priority since the sum that lead here is composed of the left priority +
-         // right priority. But the search can only continue in a subtree whose priority is less
-         // than that subtree's root, otherwise the logic would never finish.
+         // subtract this priority since the sum that lead here is composed of the left priority
+         // + right priority. But the search can only continue in a subtree whose priority is
+         // less than that subtree's root, otherwise the logic would never finish.
          priority -= m_prioritree[left_idx];
       }
       // once we have reached a leaf index, we have found the corresponding element.
@@ -336,8 +366,8 @@ template < typename ValueType >
    ::std::vector< double > prios;
    prios.reserve(m_capacity);
 
-   // stores the indices at which to break for the next level segment. Essentially stores the 2-dim
-   // info of the prio vector. Each element is the index at which the counter counts up one
+   // stores the indices at which to break for the next level segment. Essentially stores the
+   // 2-dim info of the prio vector. Each element is the index at which the counter counts up one
    // dimension up, e.g. from [3, 21] to [4,0] if the 3rd element in `shape_vec` is 22
    ::std::vector< size_t > shape_vec;
 
