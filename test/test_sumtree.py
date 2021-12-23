@@ -26,16 +26,16 @@ class TestSumTree:
     def test_insert(self):
         n = 10
         tree = pyper.SumTree(n)
-        for i in range(2 * n):
+        for i in range(n-3):
             tree.insert(i, 2 * i)
-        assert len(tree) == 2*n
+        assert len(tree) == n - 3
 
     def test_insert_kw(self):
         n = 10
-        tree = pyper.SumTree(n)
+        tree = pyper.SumTree(n-3)
         for i in range(2 * n):
             tree.insert(value=i, priority=2 * i)
-        assert len(tree) == 2*n
+        assert len(tree) == n - 3
 
     def test_insert_and_get(self, default_trees):
         expected = {
@@ -65,5 +65,5 @@ class TestSumTree:
 
     def test_iter(self, default_trees):
         for n, tree in default_trees.items():
-            for k, i in tree:
-                assert k == i, i == 2 * i
+            for (k, i), expected in zip(tree, range(n, 2 * n)):
+                assert k == expected, i == 2 * k
