@@ -12,6 +12,7 @@ target_link_libraries(
         ${per_lib}
         INTERFACE
         project_options
+        CONAN_PKG::cppitertools
 )
 
 set_target_properties(
