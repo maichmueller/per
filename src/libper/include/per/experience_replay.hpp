@@ -5,7 +5,6 @@
 #include <random>
 #include <vector>
 
-#include "per/macro.hpp"
 #include "per/sum_tree.hpp"
 
 namespace per {
@@ -15,14 +14,16 @@ namespace per {
  *
  * This class uses a Sum Tree structure to store samples with an associated priority and allows to
  * draw the samples according to the distribution:
- *
- *      \f$ \mathbb{P}(i) = \frac{\text{prio}_i^\alpha}{\sum_k \text{prio}_k^\alpha} \f$
+ * \f[
+ *       \mathbb{P}(i) = \frac{\text{prio}_i^\alpha}{\sum_k \text{prio}_k^\alpha}
+ * \f]
  *
  * The parameter \f$\alpha\f$ controls the degree of uniformity within the distribution and can be
  * set in the class's constructor. It can be changed later on as well at a computational cost.
  * Each sample \f$ i \f$ holds an associated weight \f$ w_i \f$ of the form
- *
- *      \f$ w_i = ( N \cdot \mathbb{P}(i) )^{-\beta}
+ * \f[
+ *       w_i = ( N \cdot \mathbb{P}(i) )^{-\beta}
+ * \f]
  *
  * with \f$ N \f$ being the capacity. \f$ \beta \f$ behaves in the same way for the weights as \f$
  * \alpha \f$ does for the priorities. The weights should be scaled by \f$ w_\max \f$ when used in
@@ -33,7 +34,7 @@ namespace per {
  * @tparam ValueType the data value type to store for the prioritized experience algorithm
  */
 template < typename ValueType >
-class PER_API PrioritizedExperience {
+class PrioritizedExperience {
   public:
    /// the sum tree is supposed to hold data entries (value_type, double) \f$= (d_i, w_i) \f$ with
    /// \f$ d_i \f$ being the data object and \f$ w_i \f$ being the associated weight
@@ -82,7 +83,7 @@ class PER_API PrioritizedExperience {
 
    /**
     * Sample @p n samples from the buffer according to the PER method.
-    * @param n the nubmer ofsamples to draw.
+    * @param n the nubmer of samples to draw.
     * @return a tuple of 3 vectors holding the values, weights, and indices respectively (in this
     * order). The entries of these return vectors are linked, i.e. for drawn sample \f$ i \f$ the
     * respective value, weight, and index is found in v[i], w[i], ind[i].

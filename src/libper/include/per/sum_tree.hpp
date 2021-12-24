@@ -8,7 +8,6 @@
 #include <optional>
 #include <sstream>
 
-#include "per/macro.hpp"
 #include "per/utils.hpp"
 
 namespace per {
@@ -18,9 +17,9 @@ namespace per {
  *
  * Each element is essentially stored in the leaves of the tree.
  * From there the tree spans its upper nodes from the leaves by summing up the priorities of two
- * adjacent nodes \f$ S = p_i + p_{i+1} \f$  exclusively (i.e. nodes only combine with left OR right
- * adjacent neighbour) and forms a new node of priority \f$ S \f$ connecting to the two leaves.
- * Repeating until the root spans the tree.
+ * adjacent nodes \f$ S = p_i + p_{i+1} \f$  exclusively, i.e. nodes only combine with only its left
+ * OR its right adjacent neighbour. A new node of priority \f$ S \f$ connecting to the two
+ * leaves is then formed. These steps are repeated until the root spans the tree.
  *
  * @tparam ValueType the data type to hold. The ValueType must be movable.
  */
