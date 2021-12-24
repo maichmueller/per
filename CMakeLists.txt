@@ -49,6 +49,7 @@ set(PROJECT_PER_SRC_DIR "${PROJECT_PER_DIR}/impl")
 set(PROJECT_PER_INCLUDE_DIR "${PROJECT_PER_DIR}/include")
 set(PROJECT_PER_BINDING_DIR "${PROJECT_PYPER_DIR}/binding")
 set(_cmake_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(_docs_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/docs)
 set(_docs_DOXYGEN_WORKING_DIR ${PROJECT_PER_INCLUDE_DIR})  # has to be relative to CMAKE_CURRENT_SOURCE_DIR
 
 message(STATUS "PER project files directory: ${PROJECT_SRC_DIR}")
