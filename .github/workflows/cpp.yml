@@ -89,8 +89,7 @@ jobs:
           -B ./build
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DWARNINGS_AS_ERRORS:BOOL=OFF
-          -DPER_BUILD_SHARED_LIBS:BOOL=${{ matrix.config.shared }}
-          -DUSE_PYBIND11_FINDPYTHON:BOOL=ON
+          -DENABLE_BUILD_PYTHON_EXTENSION=OFF
 
       - name: Build
         shell: bash
